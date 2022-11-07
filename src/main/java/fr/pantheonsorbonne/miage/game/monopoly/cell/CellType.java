@@ -1,4 +1,4 @@
-package fr.pantheonsorbonne.miage.game.monopoly;
+package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
 public enum CellType {
     TERRAIN,
