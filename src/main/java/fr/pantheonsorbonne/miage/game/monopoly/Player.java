@@ -2,9 +2,9 @@ package fr.pantheonsorbonne.miage.game.monopoly;
 
 public class Player {
     private int rank;
-    private int id;
+    private String id;
 
-    public Player(int id) {
+    public Player(String id) {
         this.id = id;
     }
 
@@ -20,7 +20,7 @@ public class Player {
         return this.rank;
     }
 
-    public int getId() {
+    public String getId() {
         return this.id;
     }
 

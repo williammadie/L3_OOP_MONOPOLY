@@ -1,15 +1,13 @@
 package fr.pantheonsorbonne.miage.game.monopoly;
 
-import java.util.Random;
-
 public class DoubleDice {
+    private static final int MAX_DICE_VALUE = 6;
     private int value;
     private boolean hasDoubleValue;
 
     public DoubleDice() {
-        Random rand = new Random();
-        int firstDiceValue = rand.nextInt(6);
-        int secondDiceValue = rand.nextInt(6);
+        int firstDiceValue = rollSingleDice();
+        int secondDiceValue = rollSingleDice();
         this.value = firstDiceValue + secondDiceValue;
         this.hasDoubleValue = firstDiceValue == secondDiceValue;
     }
@@ -20,5 +18,9 @@ public class DoubleDice {
 
     public boolean hasDoubleValue() {
         return hasDoubleValue;
+    }
+
+    private int rollSingleDice() {
+        return GameLogic.getRandomNumberBetween(1, MAX_DICE_VALUE);
     }
 }

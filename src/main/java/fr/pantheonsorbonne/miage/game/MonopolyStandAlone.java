@@ -5,17 +5,17 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
 
-import fr.pantheonsorbonne.miage.game.monopoly.Game;
+import fr.pantheonsorbonne.miage.game.monopoly.MonopolyGame;
 import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 import fr.pantheonsorbonne.miage.game.monopoly.Player;
 
 public class MonopolyStandAlone {
     public static void main(String[] args) {
         List<Player> playersInSession = Arrays.asList(
-                new Player(0),
-                new Player(1),
-                new Player(2));
-        Game game = new Game(playersInSession);
+                new Player(GameLogic.getUniquePlayerName()),
+                new Player(GameLogic.getUniquePlayerName()),
+                new Player(GameLogic.getUniquePlayerName()));
+        MonopolyGame game = new MonopolyGame(playersInSession);
 
         Deque<Player> players = GameLogic.determinePlayersOrder(playersInSession);
 

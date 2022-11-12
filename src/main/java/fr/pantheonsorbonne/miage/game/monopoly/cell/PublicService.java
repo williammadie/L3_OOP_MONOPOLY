@@ -8,23 +8,24 @@ import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 import fr.pantheonsorbonne.miage.game.monopoly.Player;
 
 public class PublicService extends Property {
-    private static final int ELECTRICITY_COMPAGNY_CELL_ID = 12;
-    private static final int WATER_COMPAGNY_CELL_ID = 28;
+    private static final int ELECTRICITY_COMPANY_CELL_ID = 12;
+    private static final int WATER_COMPANY_CELL_ID = 28;
 
     public PublicService(String name, int price) {
-        super(name, price);
+        super(name, price, Color.COLORLESS);
     }
 
     @Override
-    public int getRentValue(List<Player> players) {
-        Player electricityOwner = GameLogic.findOwnerOfCell(ELECTRICITY_COMPAGNY_CELL_ID, players);
-        Player waterOwner = GameLogic.findOwnerOfCell(WATER_COMPAGNY_CELL_ID, players);
-        int rentMultiplier = waterOwner.equals(electricityOwner) ? 4 : 10;
+    public int getRentValue() {
+        boolean doAllPublicServiceBelongToOwner;
+        if (this.cellId == ELECTRICITY_COMPANY_CELL_ID) {
+            doAllPublicServiceBelongToOwner = this.owner.getProperties().stream()
+                    .anyMatch(x -> x.getCellId() == WATER_COMPANY_CELL_ID);
+        } else {
+            doAllPublicServiceBelongToOwner = this.owner.getProperties().stream()
+                    .anyMatch(x -> x.getCellId() == ELECTRICITY_COMPANY_CELL_ID);
+        }   
+        int rentMultiplier = doAllPublicServiceBelongToOwner ? 10 : 4;
         return new DoubleDice().getValue() * rentMultiplier;
-    }
-
-    @Override
-    public boolean isBuildable() {
-        return false;
     }
 }

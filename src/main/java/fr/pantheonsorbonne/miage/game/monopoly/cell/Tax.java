@@ -2,16 +2,17 @@ package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
 import fr.pantheonsorbonne.miage.game.monopoly.Player;
 
-public class GoToJail extends Cell {
-    private static final int JAIL_CELL_ID = 10;
-    public GoToJail(String name) {
+public class Tax extends Cell {
+    private final int taxAmount;
+
+    protected Tax(String name, int taxAmount) {
         super(name);
+        this.taxAmount = taxAmount;
     }
 
     @Override
     public void trigger(Player player) {
-        player.movePawnTo(JAIL_CELL_ID);
-        player.setIsJailed(true);
+        player.removeMoney(taxAmount);
     }
     
 }

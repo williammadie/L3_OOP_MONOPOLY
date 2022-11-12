@@ -1,12 +1,12 @@
 package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
-import fr.pantheonsorbonne.miage.game.monopoly.Color;
+import fr.pantheonsorbonne.miage.game.monopoly.Player;
 
 public abstract class Cell {
     public static final int MAX_HOUSE_NUMBER = 4;
     private static int cellIdCounter = 0;
     private String name;
-    private int cellId;
+    protected int cellId;
 
     protected Cell(String name) {
         this.name = name;
@@ -17,7 +17,7 @@ public abstract class Cell {
         return this.cellId;
     }
 
-    public abstract boolean canBeBought();
+    public abstract void trigger(Player player);
 
     @Override
     public String toString() {

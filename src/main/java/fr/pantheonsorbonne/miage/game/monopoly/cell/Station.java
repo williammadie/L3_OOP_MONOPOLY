@@ -10,20 +10,13 @@ public class Station extends Property {
     private static final int[] STATIONS_CELL_ID = new int[] { 5, 15, 25, 35 };
 
     public Station(String name, int price) {
-        super(name, price);
+        super(name, price, Color.COLORLESS);
     }
 
     @Override
-    public int getRentValue(List<Player> players) {
-        Player[] stationOwners = new Player[] {
-                GameLogic.findOwnerOfCell(STATIONS_CELL_ID[0], players),
-                GameLogic.findOwnerOfCell(STATIONS_CELL_ID[1], players),
-                GameLogic.findOwnerOfCell(STATIONS_CELL_ID[2], players),
-                GameLogic.findOwnerOfCell(STATIONS_CELL_ID[3], players)
-        };
-        Player ownerOfCurrentStation = GameLogic.findOwnerOfCell(super.getCellId(), players);
-        int numberOfStationsOwned = (int) Arrays.stream(stationOwners).filter(x -> x.equals(ownerOfCurrentStation))
-                .count();
+    public int getRentValue() {
+        int numberOfStationsOwned = (int) this.owner.getProperties().stream()
+                .filter(x -> Arrays.asList(STATIONS_CELL_ID).contains(x)).count();
         switch (numberOfStationsOwned) {
             case 1:
                 return 25;
@@ -34,11 +27,6 @@ public class Station extends Property {
             default:
                 return 200;
         }
-    }
-
-    @Override
-    public boolean isBuildable() {
-        return false;
     }
 
 }
