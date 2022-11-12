@@ -1,9 +1,6 @@
 package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
-import java.util.HashSet;
-
-import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
-import fr.pantheonsorbonne.miage.game.monopoly.Player;
+import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public class Terrain extends Property {
     private int[] rent;
@@ -62,7 +59,7 @@ public class Terrain extends Property {
 
     private static boolean doPlayerHasAllTerrainOfColor(Player player, Color color) {
         int propertyNumberWithGivenColor = (int) player.getProperties().stream()
-                .map(property -> property.getColor())
+                .map(Property::getColor)
                 .filter(propertyColor -> propertyColor == color).count();
         switch (color) {
             case BROWN:

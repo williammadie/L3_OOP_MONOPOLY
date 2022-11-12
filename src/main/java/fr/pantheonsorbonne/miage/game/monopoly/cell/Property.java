@@ -1,10 +1,7 @@
 package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
-import fr.pantheonsorbonne.miage.game.monopoly.Player;
+import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public abstract class Property extends Cell {
     private int price;
@@ -28,6 +25,10 @@ public abstract class Property extends Cell {
 
     public Color getColor() {
         return this.color;
+    }
+
+    public int getPrice() {
+        return this.price;
     }
 
     private void payRent(Player player) {

@@ -1,10 +1,6 @@
 package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
 import java.util.Arrays;
-import java.util.List;
-
-import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
-import fr.pantheonsorbonne.miage.game.monopoly.Player;
 
 public class Station extends Property {
     private static final int[] STATIONS_CELL_ID = new int[] { 5, 15, 25, 35 };
@@ -27,6 +23,11 @@ public class Station extends Property {
             default:
                 return 200;
         }
+    }
+
+    @Override
+    public boolean isBuildable() {
+        return false;
     }
 
 }

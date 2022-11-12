@@ -3,7 +3,7 @@ package fr.pantheonsorbonne.miage.game.monopoly.cell;
 import java.util.HashMap;
 
 import fr.pantheonsorbonne.miage.game.monopoly.DoubleDice;
-import fr.pantheonsorbonne.miage.game.monopoly.Player;
+import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public class Jail extends Cell {
     public static final int JAIL_CELL_ID = 10;

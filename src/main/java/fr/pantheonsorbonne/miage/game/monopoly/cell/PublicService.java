@@ -1,11 +1,6 @@
 package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fr.pantheonsorbonne.miage.game.monopoly.DoubleDice;
-import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
-import fr.pantheonsorbonne.miage.game.monopoly.Player;
 
 public class PublicService extends Property {
     private static final int ELECTRICITY_COMPANY_CELL_ID = 12;
@@ -27,5 +22,10 @@ public class PublicService extends Property {
         }   
         int rentMultiplier = doAllPublicServiceBelongToOwner ? 10 : 4;
         return new DoubleDice().getValue() * rentMultiplier;
+    }
+
+    @Override
+    public boolean isBuildable() {
+        return false;
     }
 }

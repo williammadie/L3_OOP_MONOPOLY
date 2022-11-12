@@ -1,4 +1,4 @@
-package fr.pantheonsorbonne.miage.game.monopoly;
+package fr.pantheonsorbonne.miage.game.monopoly.player;
 
 import java.util.Comparator;
 

@@ -1,6 +1,6 @@
 package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
-import fr.pantheonsorbonne.miage.game.monopoly.Player;
+import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public class FreeParking extends Cell {
 

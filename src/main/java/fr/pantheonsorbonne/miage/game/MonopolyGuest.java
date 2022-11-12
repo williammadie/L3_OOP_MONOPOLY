@@ -15,5 +15,7 @@ public class MonopolyGuest {
         System.out.println("I am: " + playerName);
         // wait until we are able to join a new game
         Game currentGame = facade.autoJoinGame("monopoly-room-1");
+
+        // Boucle de décision
     }
 }

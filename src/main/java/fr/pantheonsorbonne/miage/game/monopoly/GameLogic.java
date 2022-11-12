@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
+import fr.pantheonsorbonne.miage.game.monopoly.player.PlayerRankComparator;
+
 public class GameLogic {
     public static final Random RAND = new Random();
 

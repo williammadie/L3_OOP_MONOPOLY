@@ -1,6 +1,6 @@
 package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
-import fr.pantheonsorbonne.miage.game.monopoly.Player;
+import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public abstract class Cell {
     public static final int MAX_HOUSE_NUMBER = 4;

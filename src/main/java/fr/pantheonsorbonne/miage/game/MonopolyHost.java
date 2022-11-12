@@ -8,7 +8,7 @@ import fr.pantheonsorbonne.miage.HostFacade;
 import fr.pantheonsorbonne.miage.PlayerFacade;
 import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 import fr.pantheonsorbonne.miage.game.monopoly.MonopolyGame;
-import fr.pantheonsorbonne.miage.game.monopoly.Player;
+import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 import fr.pantheonsorbonne.miage.model.Game;
 
 public class MonopolyHost {

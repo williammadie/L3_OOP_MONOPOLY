@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.miage.game.monopoly.DoubleDice;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
