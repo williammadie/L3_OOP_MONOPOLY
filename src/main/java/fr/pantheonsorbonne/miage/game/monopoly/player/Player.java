@@ -1,19 +1,26 @@
 package fr.pantheonsorbonne.miage.game.monopoly.player;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import fr.pantheonsorbonne.miage.game.monopoly.DoubleDice;
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
+import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBoughtException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBuiltException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.StartingPoint;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.Terrain;
 
 public class Player {
     private String id;
-    private Set<Property> properties;
+    private List<Property> properties;
     private int pawnPosition;
     private int rank;
     private int balance;
@@ -21,7 +28,7 @@ public class Player {
 
     public Player(String id) {
         this.id = id;
-        this.properties = new HashSet<>();
+        this.properties = new ArrayList<>();
         this.pawnPosition = 0;
         this.rank = -1;
         this.balance = 0;
@@ -48,11 +55,11 @@ public class Player {
         return this.id;
     }
 
-    public int getCredit() {
+    public int getBalance() {
         return balance;
     }
 
-    public Set<Property> getProperties() {
+    public List<Property> getProperties() {
         return this.properties;
     }
 
@@ -95,7 +102,32 @@ public class Player {
         moneyReceiver.addMoney(moneyAmount);
     }
 
-    public void play(int cellId, GameAction buyCell) {
+    public void makeChoice(GameAction possibleAction) {
+        switch (possibleAction) {
+            case BUY_HOUSE:
+                // Build whenever he can
+                if (properties.isEmpty())
+                    return;
+                int randInt = GameLogic.getRandomNumberBetween(0, properties.size());
+                Property property = this.properties.get(randInt);
+                try {
+                    property.buyHouse(this);
+                    System.out.println(this.id + " buys a new house at cell " + property.getName());
+                } catch (CellCannotBeBuiltException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
+            default:
+                // Buy whenever he can
+                Cell currentCell = Board.getCellWithId(this.getPawnPosition());
+                try {
+                    currentCell.buyCell(this);
+                    System.out.println(this.id + " buys cell " + currentCell.getName());
+                } catch (CellCannotBeBoughtException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
+        }
     }
 
     public void movePawnOf(int numberOfCells) {

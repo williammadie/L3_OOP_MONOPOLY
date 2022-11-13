@@ -3,7 +3,7 @@ package fr.pantheonsorbonne.miage.game.monopoly.cell;
 import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-public class Opportunity extends Cell {
+public class Opportunity extends Special {
     private static final int OPPORTUNITY_MIN_MONEY_AMOUNT = 50;
     private static final int OPPORTUNITY_MAX_MONEY_AMOUNT = 500;
 

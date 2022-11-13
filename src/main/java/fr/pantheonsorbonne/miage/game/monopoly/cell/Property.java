@@ -33,7 +33,7 @@ public abstract class Property extends Cell {
 
     private void payRent(Player player) {
         player.pay(this.getRentValue(), this.owner);
-    } 
+    }
 
     public abstract int getRentValue();
 
@@ -42,10 +42,33 @@ public abstract class Property extends Cell {
     @Override
     public void trigger(Player player) {
         if (this.isVacant()) {
-            player.play(this.getCellId(), GameAction.BUY_CELL);
+            player.makeChoice(GameAction.BUY_CELL);
         } else {
             this.payRent(player);
         }
+    }
+
+    @Override
+    public void buyCell(Player player) throws CellCannotBeBoughtException {
+        if (player.getBalance() < this.price)
+            throw new CellCannotBeBoughtException("Player doesn't have required amount for buying.");
+
+        this.owner = player;
+    }
+
+    @Override
+    public void sellCell(Player player) throws CellCannotBeBoughtException {
+        throw new CellCannotBeBoughtException("Cannot sell the cell " + super.name);
+    }
+
+    @Override
+    public void buyHouse(Player player) throws CellCannotBeBuiltException {
+        throw new CellCannotBeBuiltException("Cannot build on cell " + super.name);
+    }
+
+    @Override
+    public void sellHouse(Player player) throws CellCannotBeBuiltException {
+        throw new CellCannotBeBuiltException("Cannot sell house on cell " + super.name);
     }
 
 }

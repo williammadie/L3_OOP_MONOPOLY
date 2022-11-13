@@ -2,7 +2,7 @@ package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-public class GoToJail extends Cell {
+public class GoToJail extends Special {
     private static final int JAIL_CELL_ID = 10;
     public GoToJail(String name) {
         super(name);
