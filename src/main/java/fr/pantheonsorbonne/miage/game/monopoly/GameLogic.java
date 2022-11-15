@@ -5,6 +5,8 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 import fr.pantheonsorbonne.miage.game.monopoly.player.PlayerRankComparator;
@@ -16,9 +18,12 @@ public class GameLogic {
     }
 
     public static Deque<Player> determinePlayersOrder(List<Player> players) {
-        for (Player player : players) {
-            player.rollDoubleDiceForRanking();
-        }
+        do {
+            for (Player player : players) {
+                player.rollDoubleDiceForRanking();
+            }
+        } while (players.stream().map(Player::getRank).collect(Collectors.toSet()).size() != players.size());
+        
         players.sort(new PlayerRankComparator().reversed());
         ArrayDeque<Player> playersQueue = new ArrayDeque<>();
         playersQueue.addAll(players);

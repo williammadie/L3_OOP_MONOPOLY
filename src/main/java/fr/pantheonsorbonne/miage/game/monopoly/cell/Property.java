@@ -4,7 +4,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public abstract class Property extends Cell {
-    private int price;
+    protected int price;
     protected Player owner;
     protected Color color;
 
@@ -17,6 +17,10 @@ public abstract class Property extends Cell {
 
     public Player getOwner() {
         return this.owner;
+    }
+
+    public void setOwner(Player newOwner) {
+        this.owner = newOwner;
     }
 
     public boolean isVacant() {
@@ -32,18 +36,17 @@ public abstract class Property extends Cell {
     }
 
     private void payRent(Player player) {
+        System.out.println(player.getId() + " has to pay " + this.getRentValue() + "Eur to " + this.owner);
         player.pay(this.getRentValue(), this.owner);
     }
 
     public abstract int getRentValue();
 
-    public abstract boolean isBuildable();
-
     @Override
     public void trigger(Player player) {
         if (this.isVacant()) {
             player.makeChoice(GameAction.BUY_CELL);
-        } else {
+        } else if (!this.getOwner().equals(player)) {
             this.payRent(player);
         }
     }
@@ -53,12 +56,19 @@ public abstract class Property extends Cell {
         if (player.getBalance() < this.price)
             throw new CellCannotBeBoughtException("Player doesn't have required amount for buying.");
 
-        this.owner = player;
+        if (!this.isVacant())
+            throw new CellCannotBeBoughtException("Cell is already occupied.");
+
+        System.out.println(player.getId() + " buys cell " + super.name);
+        player.addProperty(this);
     }
 
     @Override
     public void sellCell(Player player) throws CellCannotBeBoughtException {
-        throw new CellCannotBeBoughtException("Cannot sell the cell " + super.name);
+        if (!this.owner.equals(player))
+            throw new CellCannotBeBoughtException("Cannot sell the cell " + super.name);
+
+        player.removeProperty(this);
     }
 
     @Override

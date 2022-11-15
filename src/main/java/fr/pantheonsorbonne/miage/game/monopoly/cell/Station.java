@@ -25,9 +25,4 @@ public class Station extends Property {
         }
     }
 
-    @Override
-    public boolean isBuildable() {
-        return false;
-    }
-
 }

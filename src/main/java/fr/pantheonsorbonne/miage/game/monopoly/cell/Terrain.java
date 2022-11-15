@@ -40,18 +40,21 @@ public class Terrain extends Property {
     @Override
     public int getRentValue() {
         if (doPlayerHasAllTerrainOfColor(this.owner, this.color)) {
-            return rent[this.houseNumber++];
+            return rent[this.houseNumber + 1];
         } else {
             return rent[0];
         }
 
     }
 
-    public boolean isBuildable() {
+    private boolean isBuildable() {
+        if (this.owner == null)
+            return false;
+
         if (!doPlayerHasAllTerrainOfColor(this.owner, this.color))
             return false;
 
-        if (this.houseNumber == Cell.MAX_HOUSE_NUMBER)
+        if (this.houseNumber >= Cell.MAX_HOUSE_NUMBER)
             return false;
 
         return doOtherCellsOfColorHaveAtLeast(this.houseNumber);
@@ -79,4 +82,31 @@ public class Terrain extends Property {
         }
         return result;
     }
+
+    @Override
+    public void buyHouse(Player player) throws CellCannotBeBuiltException {
+        if (player.getBalance() < this.color.housePrice)
+            throw new CellCannotBeBuiltException("Player doesn't have required amount for buying a house.");
+
+        if (!this.isBuildable())
+            throw new CellCannotBeBuiltException("Cell " + super.name + " is unbuildable");
+
+        System.out.println(player.getId() + " buys a new house at cell " + super.name);
+        this.buildNewHouse();
+    }
+
+    @Override
+    public void sellHouse(Player player) throws CellCannotBeBuiltException {
+        if (this.houseNumber == 0)
+            throw new CellCannotBeBuiltException("Cannot sell house on cell " + super.name);
+
+        System.out.println(player.getId() + " sells a house at cell " + super.name);
+        this.houseNumber--;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + name + "," + price + "Eur," + color + "," + houseNumber + "}";
+    }
+
 }

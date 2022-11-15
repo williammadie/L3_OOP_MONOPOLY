@@ -21,13 +21,7 @@ public class MonopolyStandAlone {
         // Gameloop
         do {
             Player currentPlayer = players.poll();
-            System.out.println("\nPlayer " + currentPlayer.getId() + " is playing!");
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+
             if (!currentPlayer.isBankrupt()) {
                 game.nextTour(currentPlayer);
                 players.add(currentPlayer);

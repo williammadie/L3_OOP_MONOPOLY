@@ -76,7 +76,7 @@ public class Player {
     }
 
     public boolean isBankrupt() {
-        return balance == 0 && properties.isEmpty();
+        return balance <= 0 && properties.isEmpty();
     }
 
     public void addMoney(int price) {
@@ -84,17 +84,25 @@ public class Player {
     }
 
     public void removeMoney(int price) {
+        while (this.getBalance() < price) {
+            if (this.properties.isEmpty())
+                break;
+            this.makeChoice(GameAction.SELL_CELL);
+        }
         balance -= price;
     }
 
     public void addProperty(Property p) {
         if (p.isVacant() && balance >= p.getPrice()) {
             this.balance -= p.getPrice();
+            this.properties.add(p);
+            p.setOwner(this);
         }
     }
 
     public void removeProperty(Property p) {
         this.properties.remove(p);
+        p.setOwner(null);
     }
 
     public void pay(int moneyAmount, Player moneyReceiver) {
@@ -108,25 +116,30 @@ public class Player {
                 // Build whenever he can
                 if (properties.isEmpty())
                     return;
-                int randInt = GameLogic.getRandomNumberBetween(0, properties.size());
+                int randInt = GameLogic.getRandomNumberBetween(0, properties.size()-1);
                 Property property = this.properties.get(randInt);
                 try {
                     property.buyHouse(this);
-                    System.out.println(this.id + " buys a new house at cell " + property.getName());
                 } catch (CellCannotBeBuiltException e) {
                     System.out.println(e.getMessage());
                 }
                 break;
-            default:
+            case BUY_CELL:
                 // Buy whenever he can
                 Cell currentCell = Board.getCellWithId(this.getPawnPosition());
                 try {
                     currentCell.buyCell(this);
-                    System.out.println(this.id + " buys cell " + currentCell.getName());
                 } catch (CellCannotBeBoughtException e) {
                     System.out.println(e.getMessage());
                 }
                 break;
+            case SELL_CELL:
+                // Sell the first cell in properties
+                try {
+                    this.properties.get(0).sellCell(this);
+                } catch (CellCannotBeBoughtException e) {
+                    e.printStackTrace();
+                }
         }
     }
 
@@ -150,6 +163,6 @@ public class Player {
     }
 
     public String toString() {
-        return "{id:" + this.id + ", rank:" + this.rank + "}";
+        return "{id:" + this.id + ", rank:" + this.rank + ", balance:" + this.balance + ", pawnPosition:" + this.pawnPosition + ", properties:" + this.properties + "}";
     }
 }

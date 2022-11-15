@@ -23,9 +23,4 @@ public class PublicService extends Property {
         int rentMultiplier = doAllPublicServiceBelongToOwner ? 10 : 4;
         return new DoubleDice().getValue() * rentMultiplier;
     }
-
-    @Override
-    public boolean isBuildable() {
-        return false;
-    }
 }
