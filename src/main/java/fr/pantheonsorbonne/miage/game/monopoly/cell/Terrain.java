@@ -48,6 +48,7 @@ public class Terrain extends Property {
     }
 
     private boolean isBuildable() {
+
         if (this.owner == null)
             return false;
 
@@ -77,8 +78,10 @@ public class Terrain extends Property {
         boolean result = true;
         for (Property property : this.owner.getProperties(this.color)) {
             Terrain terrain = (Terrain) property;
-            if (terrain.getHouseNumber() != requiredMinimumHouseNumber)
+            if (terrain.getHouseNumber() < requiredMinimumHouseNumber) {
                 result = false;
+                break;
+            }
         }
         return result;
     }
@@ -102,6 +105,12 @@ public class Terrain extends Property {
 
         System.out.println(player.getId() + " sells a house at cell " + super.name);
         this.houseNumber--;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        this.houseNumber = 0;
     }
 
     @Override

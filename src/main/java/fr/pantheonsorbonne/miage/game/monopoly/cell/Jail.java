@@ -15,6 +15,9 @@ public class Jail extends Special {
 
     @Override
     public void trigger(Player player) {
+        if (!player.getIsJailed())
+            return;
+
         try {
             turnCounter.put(player, turnCounter.get(player) + 1);
         } catch (Exception e) {
@@ -25,6 +28,7 @@ public class Jail extends Special {
         if (dice.hasDoubleValue() || turnCounter.get(player) == 3) {
             player.movePawnOf(result);
             turnCounter.remove(player);
+            player.setIsJailed(false);
         }
             
     }

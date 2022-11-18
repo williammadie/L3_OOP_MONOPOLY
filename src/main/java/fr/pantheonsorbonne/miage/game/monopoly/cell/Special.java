@@ -23,4 +23,8 @@ public abstract class Special extends Cell {
     public void sellHouse(Player player) throws CellCannotBeBuiltException {
         throw new CellCannotBeBuiltException("Cannot sell house on cell " + super.name);
     }
+
+    public void reset() {
+        return;
+    }
 }

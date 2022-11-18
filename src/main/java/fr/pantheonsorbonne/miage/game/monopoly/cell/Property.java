@@ -45,6 +45,9 @@ public abstract class Property extends Cell {
     @Override
     public void trigger(Player player) {
         if (this.isVacant()) {
+            if (player.getBalance() < this.getPrice())
+                return;
+
             player.makeChoice(GameAction.BUY_CELL);
         } else if (!this.getOwner().equals(player)) {
             this.payRent(player);
@@ -79,6 +82,11 @@ public abstract class Property extends Cell {
     @Override
     public void sellHouse(Player player) throws CellCannotBeBuiltException {
         throw new CellCannotBeBuiltException("Cannot sell house on cell " + super.name);
+    }
+
+    @Override
+    public void reset() {
+        this.owner = null;
     }
 
 }

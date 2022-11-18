@@ -19,9 +19,9 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.StartingPoint;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Terrain;
 
 public class Player {
-    private String id;
+    protected String id;
     private List<Property> properties;
-    private int pawnPosition;
+    protected int pawnPosition;
     private int rank;
     private int balance;
     private boolean isJailed;

@@ -7,15 +7,12 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public class MonopolyGame {
-
-        private Cell[] board;
         private List<Player> players;
         private int turnCounter;
 
         public MonopolyGame(List<Player> players) {
-                this.board = Board.getGameBoard();
                 this.players = players;
-                this.turnCounter = 9;
+                this.turnCounter = 0;
                 sendMoneyToAllPlayers(1500);
         }
 
@@ -26,7 +23,9 @@ public class MonopolyGame {
                 player.makeChoice(GameAction.BUY_HOUSE);
 
                 // Player Turn Phase
-                player.movePawnOf(player.rollDoubleDice());
+                if (!player.getIsJailed())
+                        player.movePawnOf(player.rollDoubleDice());
+
                 Cell playerCurrentCell = Board.getCellWithId(player.getPawnPosition());
                 System.out.println(playerCurrentCell.toString());
                 playerCurrentCell.trigger(player);

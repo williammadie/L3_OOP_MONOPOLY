@@ -1,5 +1,7 @@
 package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
+import java.util.Arrays;
+
 public class Board {
     private static final String OPPORTUNITY_CELL_NAME = "Case Chance";
     private static final Cell[] gameBoard = initGameBoard();
@@ -22,7 +24,7 @@ public class Board {
                         new int[] { 2, 4, 10, 30, 90, 160 }),
                 new Opportunity(OPPORTUNITY_CELL_NAME),
                 new Terrain("Rue Lecourbe", 60, Color.BROWN, new int[] { 4, 8, 20, 60, 180, 320 }),
-                new Opportunity(OPPORTUNITY_CELL_NAME),
+                new Tax("Impôts sur le Revenu", 200),
                 new Station("Gare Montparnasse", 200),
                 new Terrain("Rue de Vaugirard", 100, Color.LIGHT_BLUE,
                         new int[] { 6, 12, 30, 90, 270, 400 }),
@@ -81,9 +83,13 @@ public class Board {
                 new Terrain("Avenue des Champs-Elysées", 250, Color.DEEP_BLUE,
                         new int[] { 35, 70, 175, 500, 1100,
                                 1300 }),
-                new Opportunity(OPPORTUNITY_CELL_NAME),
+                new Tax("Taxe de Luxe", 100),
                 new Terrain("Rue de La Paix", 400, Color.DEEP_BLUE, new int[] { 50, 100, 200, 600, 1400,
                         1700 })
         };
+    }
+
+    public static void reset() {
+        Arrays.stream(gameBoard).forEach(Cell::reset);
     }
 }

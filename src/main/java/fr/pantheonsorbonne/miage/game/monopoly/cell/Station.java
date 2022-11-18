@@ -1,9 +1,10 @@
 package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class Station extends Property {
-    private static final int[] STATIONS_CELL_ID = new int[] { 5, 15, 25, 35 };
+    private static final List<Integer> STATIONS_CELL_ID = Arrays.asList(5, 15, 25, 35);
 
     public Station(String name, int price) {
         super(name, price, Color.COLORLESS);
@@ -12,7 +13,8 @@ public class Station extends Property {
     @Override
     public int getRentValue() {
         int numberOfStationsOwned = (int) this.owner.getProperties().stream()
-                .filter(x -> Arrays.asList(STATIONS_CELL_ID).contains(x)).count();
+                .filter(x -> STATIONS_CELL_ID.contains(x.getCellId())).count();
+        System.out.println(this.owner + " has " + numberOfStationsOwned + " stations");
         switch (numberOfStationsOwned) {
             case 1:
                 return 25;

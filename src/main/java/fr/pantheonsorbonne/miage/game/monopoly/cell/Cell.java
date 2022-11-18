@@ -31,6 +31,8 @@ public abstract class Cell {
 
     public abstract void sellHouse(Player player) throws CellCannotBeBuiltException;
 
+    public abstract void reset();
+
     @Override
     public String toString() {
         return "{" + name + "}";
