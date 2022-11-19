@@ -36,11 +36,11 @@ public class MonopolyGuest {
             GameAction action = GameAction.valueOf(command.name());
             System.out.println(action);
             switch (action) {
+
                 case MOVE_PAWN_TO: // index
                     me.movePawnTo(Integer.parseInt(command.body()));
                     break;
-                // actualise l'état du pion
-                // player.setPawnPosition(params)
+
                 case BUY_CELL: // index
                     String idCell = command.body();
                     facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
@@ -55,18 +55,22 @@ public class MonopolyGuest {
                         e.printStackTrace();
                     }
                     break;
-                // player.buy_cell(params)
-                // player.makeDecision(action, params)
-                //
+
                 case SELL_CELL: // index
-                    System.out.println("in progress..");
+                    Cell cellToSell = me.getProperties()
+                            .get(GameLogic.getRandomNumberBetween(0, me.getProperties().size() - 1));
+                    int cellToSellId = cellToSell.getCellId();
+                    facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
+                            new GameCommand(GameAction.SELL_CELL.name(), Integer.toString(cellToSellId)));
                     break;
                 case BUY_HOUSE: // index
                     System.out.println("in progress..");
                     break;
+
                 case SELL_HOUSE: // index
                     System.out.println("in progress..");
                     break;
+
                 case SEND_MONEY_TO: // cashAmount, targetedPlayerName
                     String[] params = command.body().split(",");
                     String cashAmount = params[0];
@@ -77,6 +81,8 @@ public class MonopolyGuest {
 
                 case SEND_MONEY: // cashAmount
                     me.addMoney(Integer.parseInt(command.body()));
+                    break;
+                default:
                     break;
             }
         }

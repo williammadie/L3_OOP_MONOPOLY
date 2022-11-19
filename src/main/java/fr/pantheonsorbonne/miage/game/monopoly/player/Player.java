@@ -1,7 +1,6 @@
 package fr.pantheonsorbonne.miage.game.monopoly.player;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,7 +15,6 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBuiltException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.StartingPoint;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Terrain;
 
 public class Player {
     protected String id;
