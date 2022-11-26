@@ -1,17 +1,12 @@
 package fr.pantheonsorbonne.miage.game.monopoly.strategy;
+import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public abstract class CommonActions implements Strategy{
-
+    
 
     @Override
     public boolean doBuyHouse(Player player) {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
-    @Override
-    public boolean doSellHouse(Player player) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 }

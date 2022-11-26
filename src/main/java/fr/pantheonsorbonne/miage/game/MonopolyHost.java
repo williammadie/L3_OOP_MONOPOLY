@@ -43,8 +43,7 @@ public class MonopolyHost {
 
             if (!currentPlayer.isBankrupt()) {
                 monopolyGame.nextTour(currentPlayer);
-                System.out
-                        .println("Player " + currentPlayer.getId() + " is playing! " + currentPlayer.toString() + "\n");
+                System.out.println("Player " + currentPlayer.getId() + " is playing! " + currentPlayer.toString() + "\n");
                 players.add(currentPlayer);
             } else {
                 System.out.println("Player" + currentPlayer.getId() + " is bankrupt!");

@@ -87,6 +87,7 @@ public class Player {
             if (this.properties.isEmpty())
                 break;
             this.makeChoice(GameAction.SELL_CELL);
+            this.makeChoice(GameAction.SELL_HOUSE);
         }
         balance -= price;
     }
@@ -105,14 +106,6 @@ public class Player {
         p.setOwner(null);
     }
 
-    public void removeHouse() {
-        try {
-            this.properties.get(0).sellHouse(this);
-        } catch (CellCannotBeBuiltException e) {
-            e.printStackTrace();
-        }
-        
-    }
 
     public void pay(int moneyAmount, Player moneyReceiver) {
         this.removeMoney(moneyAmount);

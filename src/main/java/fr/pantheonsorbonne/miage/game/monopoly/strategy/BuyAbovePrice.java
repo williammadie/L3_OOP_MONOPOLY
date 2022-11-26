@@ -15,13 +15,10 @@ public class BuyAbovePrice extends CommonActions {
     public boolean doBuyCell(Player player) {
         Cell currentCell = Board.getCellWithId(player.getPawnPosition());
         
-            int prix = currentCell.getPrice();
-            
-        
-        return (prix>=100);
-        // TODO Auto-generated method stub
- 
+        int prix = currentCell.getPrice();              
+        return prix>=100;
     }
+
     
 }
 

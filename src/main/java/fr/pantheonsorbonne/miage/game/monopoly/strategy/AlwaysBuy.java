@@ -6,14 +6,7 @@ public class AlwaysBuy extends CommonActions {
 
     @Override
     public boolean doBuyCell(Player player) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean doBuyHouse(Player player) {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
 

@@ -11,11 +11,10 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 
 import fr.pantheonsorbonne.miage.game.monopoly.cell.StartingPoint;
 
-
 public interface Strategy {
 
     default void makeChoice(GameAction gameAction, Player player) {
-       switch (gameAction) {
+        switch (gameAction) {
             case BUY_CELL:
                 if (doBuyCell(player)) {
                     Cell currentCell = Board.getCellWithId(player.getPawnPosition());
@@ -27,44 +26,47 @@ public interface Strategy {
                 }
                 break;
             case SELL_CELL:
-            if (player.getProperties().isEmpty())
-                    return;
-                   player.makeChoice(GameAction.SELL_CELL);  
-            // vend la 1ere de la liste des props 
-                break; 
-            
-            case BUY_HOUSE:
-            if (doBuyHouse(player)) {
-                Cell currentCell = Board.getCellWithId(player.getPawnPosition());
-                try {
-                    currentCell.buyHouse(player);
-                } catch (CellCannotBeBuiltException e) {
-                    e.printStackTrace();
+                if (player.getProperties().isEmpty()) {
+                    break;
                 }
-            }
-            // Il construit tt le temps
-            // il a le choix d'acheter une maison sur un des terrains qu'il a, le do buy house peut s'appliquer 
+                player.getProperties().get(0).sellCell(player);
+                break;
+
+            case BUY_HOUSE:
+                if (doBuyHouse(player)) {
+                    for (Property property : player.getProperties()) {
+                        try {
+                            property.buyHouse(player);
+                            break;
+                        } catch (CellCannotBeBuiltException e) {
+                            continue;
+                        }
+                    }
+                }
                 break;
 
             case SELL_HOUSE:
-            if(player.getBalance() <= 0 && !player.getProperties().isEmpty()){                
-                    player.removeHouse();            
-            }
-            // il vend une maison que si il est obligé  
-            // parcourir la liste des proprietés : si prop qui a des maisons je vends 
+                for (Property property : player.getProperties()) {
+                    if (player.getProperties().isEmpty() || property.getHouseNumber() == 0) {
+                        continue;
+                    }
+                    try {
+                        property.sellHouse(player);
+                        break;
+                    } catch (CellCannotBeBuiltException e) {
+                        continue;
+                    }
+
+                }
                 break;
 
             default:
                 break;
-        } 
+        }
     }
-
-
 
     boolean doBuyCell(Player player);
 
     boolean doBuyHouse(Player player);
-
-   
 
 }
