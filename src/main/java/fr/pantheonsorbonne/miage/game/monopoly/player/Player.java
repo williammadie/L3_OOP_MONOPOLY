@@ -77,6 +77,7 @@ public class Player {
         return balance <= 0 && properties.isEmpty();
     }
 
+
     public void addMoney(int price) {
         balance += price;
     }
@@ -98,9 +99,19 @@ public class Player {
         }
     }
 
+
     public void removeProperty(Property p) {
         this.properties.remove(p);
         p.setOwner(null);
+    }
+
+    public void removeHouse() {
+        try {
+            this.properties.get(0).sellHouse(this);
+        } catch (CellCannotBeBuiltException e) {
+            e.printStackTrace();
+        }
+        
     }
 
     public void pay(int moneyAmount, Player moneyReceiver) {
