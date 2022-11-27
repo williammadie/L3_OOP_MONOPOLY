@@ -11,9 +11,9 @@ import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 public class MonopolyStandAlone {
     public static void main(String[] args) {
         List<Player> playersInSession = Arrays.asList(
-                new Player(GameLogic.getUniquePlayerName()),
-                new Player(GameLogic.getUniquePlayerName()),
-                new Player(GameLogic.getUniquePlayerName()));
+                new Player(GameLogic.generateUniquePlayerName()),
+                new Player(GameLogic.generateUniquePlayerName()),
+                new Player(GameLogic.generateUniquePlayerName()));
         MonopolyGame game = new MonopolyGame(playersInSession);
 
         Deque<Player> players = GameLogic.determinePlayersOrder(playersInSession);

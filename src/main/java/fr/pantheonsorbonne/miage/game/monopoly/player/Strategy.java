@@ -8,7 +8,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBoughtException;
 public interface Strategy {
 
     default void makeChoice(GameAction gameAction, Player player) {
-       switch (gameAction) {
+        switch (gameAction) {
             case BUY_CELL:
                 if (doBuyCell(player)) {
                     Cell currentCell = Board.getCellWithId(this.getPawnPosition());
@@ -20,8 +20,8 @@ public interface Strategy {
                 }
                 break;
             case SELL_CELL:
-                break;       
-       } 
+                break;
+        }
     }
 
     int getPawnPosition();

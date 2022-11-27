@@ -1,5 +1,7 @@
 package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
+import java.rmi.UnexpectedException;
+
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public abstract class Cell {
@@ -25,7 +27,7 @@ public abstract class Cell {
 
     public abstract void buyCell(Player player) throws CellCannotBeBoughtException;
 
-    public abstract void sellCell(Player player) throws CellCannotBeBoughtException;
+    public abstract void sellCell(Player player) throws CellCannotBeSoldException;
 
     public abstract void buyHouse(Player player) throws CellCannotBeBuiltException;
 

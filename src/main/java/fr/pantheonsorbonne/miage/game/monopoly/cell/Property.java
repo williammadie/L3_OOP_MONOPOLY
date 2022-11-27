@@ -1,5 +1,7 @@
 package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
+import java.rmi.UnexpectedException;
+
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
@@ -35,8 +37,12 @@ public abstract class Property extends Cell {
         return this.price;
     }
 
+    public int getHouseNumber() {
+        return 0;
+    }
+
     private void payRent(Player player) {
-        System.out.println(player.getId() + " has to pay " + this.getRentValue() + "Eur to " + this.owner);
+        System.out.println(player.getId() + " has to pay " + this.getRentValue() + "Eur to " + this.owner.getId());
         player.pay(this.getRentValue(), this.owner);
     }
 
@@ -48,7 +54,11 @@ public abstract class Property extends Cell {
             if (player.getBalance() < this.getPrice())
                 return;
 
-            player.makeChoice(GameAction.BUY_CELL);
+            try {
+                player.makeChoice(GameAction.BUY_CELL);
+            } catch (UnexpectedException e) {
+                e.printStackTrace();
+            }
         } else if (!this.getOwner().equals(player)) {
             this.payRent(player);
         }
@@ -67,9 +77,9 @@ public abstract class Property extends Cell {
     }
 
     @Override
-    public void sellCell(Player player) throws CellCannotBeBoughtException {
+    public void sellCell(Player player) throws CellCannotBeSoldException {
         if (!this.owner.equals(player))
-            throw new CellCannotBeBoughtException("Cannot sell the cell " + super.name);
+            throw new CellCannotBeSoldException("Cell " + super.name + " does not belong to player " + player.getId());
 
         player.removeProperty(this);
     }

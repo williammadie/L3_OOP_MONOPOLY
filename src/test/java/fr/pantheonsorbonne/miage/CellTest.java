@@ -19,7 +19,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBoughtException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBuiltException;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-public class CellTest {
+class CellTest {
 
     private Player player;
     private Player adversary;

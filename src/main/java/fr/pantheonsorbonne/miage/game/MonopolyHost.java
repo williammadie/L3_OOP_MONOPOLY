@@ -47,7 +47,7 @@ public class MonopolyHost {
                         .println("Player " + currentPlayer.getId() + " is playing! " + currentPlayer.toString() + "\n");
                 players.add(currentPlayer);
             } else {
-                System.out.println("Player" + currentPlayer.getId() + " is bankrupt!");
+                System.out.println("Player " + currentPlayer.getId() + " is bankrupt!");
             }
         } while (players.size() > 1);
     }

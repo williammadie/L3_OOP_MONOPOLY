@@ -12,8 +12,8 @@ public abstract class Special extends Cell {
         throw new CellCannotBeBoughtException("Cannot buy the cell " + super.name);
     }
 
-    public void sellCell(Player player) throws CellCannotBeBoughtException {
-        throw new CellCannotBeBoughtException("Cannot sell the cell " + super.name);
+    public void sellCell(Player player) throws CellCannotBeSoldException {
+        throw new CellCannotBeSoldException("Cannot sell the cell " + super.name);
     }
 
     public void buyHouse(Player player) throws CellCannotBeBuiltException {

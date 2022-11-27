@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.miage.game.monopoly;
 
+import java.rmi.UnexpectedException;
 import java.util.List;
 
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
@@ -19,12 +20,20 @@ public class MonopolyGame {
         public void nextTour(Player player) {
                 System.out.println("\nTurn n°" + this.turnCounter + ": " + player.getId() + " is playing:");
                 System.out.println(player.toString());
-                // Building Phase
-                player.makeChoice(GameAction.BUY_HOUSE);
-
-                // Player Turn Phase
                 if (!player.getIsJailed())
                         player.movePawnOf(player.rollDoubleDice());
+
+                
+                // Building Phase
+                try {
+                        player.makeChoice(GameAction.BUY_HOUSE);
+                } catch (UnexpectedException e) {
+                        e.printStackTrace();
+                        System.exit(2);
+                }
+
+                // Player Turn Phase
+                
 
                 Cell playerCurrentCell = Board.getCellWithId(player.getPawnPosition());
                 System.out.println(playerCurrentCell.toString());

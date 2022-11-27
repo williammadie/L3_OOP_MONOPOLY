@@ -13,11 +13,11 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-public class GameLoopTest {
+class GameLoopTest {
 
     private List<Player> playersInSession;
     private Deque<Player> players;
-    
+
     @BeforeEach
     void init() {
         this.playersInSession = Arrays.asList(

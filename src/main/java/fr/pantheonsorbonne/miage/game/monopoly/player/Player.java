@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.miage.game.monopoly.player;
 
+import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -12,6 +13,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBoughtException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBuiltException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeSoldException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.StartingPoint;
@@ -85,7 +87,11 @@ public class Player {
         while (this.getBalance() < price) {
             if (this.properties.isEmpty())
                 break;
-            this.makeChoice(GameAction.SELL_CELL);
+            try {
+                this.makeChoice(GameAction.SELL_CELL);
+            } catch (UnexpectedException e) {
+                e.printStackTrace();
+            }
         }
         balance -= price;
     }
@@ -108,18 +114,32 @@ public class Player {
         moneyReceiver.addMoney(moneyAmount);
     }
 
-    public void makeChoice(GameAction possibleAction) {
+    public void makeChoice(GameAction possibleAction) throws UnexpectedException {
         switch (possibleAction) {
             case BUY_HOUSE:
                 // Build whenever he can
                 if (properties.isEmpty())
                     return;
-                int randInt = GameLogic.getRandomNumberBetween(0, properties.size()-1);
+                int randInt = GameLogic.getRandomNumberBetween(0, properties.size() - 1);
                 Property property = this.properties.get(randInt);
                 try {
                     property.buyHouse(this);
                 } catch (CellCannotBeBuiltException e) {
                     System.out.println(e.getMessage());
+                }
+                break;
+            case SELL_HOUSE:
+                for (Property p : properties) {
+                    int houseNumber = p.getHouseNumber();
+                    if (houseNumber == 0)
+                        continue;
+
+                    try {
+                        p.sellHouse(this);
+                    } catch (CellCannotBeBuiltException e) {
+                        e.printStackTrace();
+                        System.exit(2);
+                    }
                 }
                 break;
             case BUY_CELL:
@@ -129,15 +149,20 @@ public class Player {
                     currentCell.buyCell(this);
                 } catch (CellCannotBeBoughtException e) {
                     System.out.println(e.getMessage());
+                    System.exit(2);
                 }
                 break;
             case SELL_CELL:
                 // Sell the first cell in properties
                 try {
                     this.properties.get(0).sellCell(this);
-                } catch (CellCannotBeBoughtException e) {
+                } catch (CellCannotBeSoldException e) {
                     e.printStackTrace();
+                    System.exit(2);
                 }
+                break;
+            default:
+                throw new UnexpectedException("Player choice required for unexpected case: " + possibleAction);
         }
     }
 
@@ -150,6 +175,7 @@ public class Player {
         if (cellId < this.pawnPosition && cellId != 0)
             getStartingBonus();
 
+        System.out.println(this.getId() + " moves to cell n°" + cellId);
         this.pawnPosition = cellId;
     }
 
@@ -161,6 +187,7 @@ public class Player {
     }
 
     public String toString() {
-        return "{id:" + this.id + ", rank:" + this.rank + ", balance:" + this.balance + ", pawnPosition:" + this.pawnPosition + ", properties:" + this.properties + "}";
+        return "{id:" + this.id + ", rank:" + this.rank + ", balance:" + this.balance + ", pawnPosition:"
+                + this.pawnPosition + ", properties:" + this.properties + "}";
     }
 }

@@ -13,6 +13,7 @@ public class Terrain extends Property {
         this.houseNumber = 0;
     }
 
+    @Override
     public int getHouseNumber() {
         return this.houseNumber;
     }
