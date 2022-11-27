@@ -6,30 +6,21 @@ import java.util.List;
 
 import fr.pantheonsorbonne.miage.game.monopoly.MonopolyGame;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.AlwaysBuy;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyAbovePrice;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyOrangeOnly;
 import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 
 public class MonopolyStandAlone {
     public static void main(String[] args) {
         List<Player> playersInSession = Arrays.asList(
-                new Player(GameLogic.getUniquePlayerName()),
-                new Player(GameLogic.getUniquePlayerName()),
-                new Player(GameLogic.getUniquePlayerName()));
-        MonopolyGame game = new MonopolyGame(playersInSession);
-
-        Deque<Player> players = GameLogic.determinePlayersOrder(playersInSession);
+                new Player(GameLogic.generateUniquePlayerName(), new AlwaysBuy()),
+                new Player(GameLogic.generateUniquePlayerName(), new BuyAbovePrice()),
+                new Player(GameLogic.generateUniquePlayerName(), new BuyOrangeOnly()));
 
         // Gameloop
-        do {
-            Player currentPlayer = players.poll();
+        Player winner = GameLogic.playTheGame(playersInSession);
 
-            if (!currentPlayer.isBankrupt()) {
-                game.nextTour(currentPlayer);
-                players.add(currentPlayer);
-            } else {
-                System.out.println("Player" + currentPlayer.getId() + " is bankrupt!");
-            }
-        } while (players.size() > 1);
-
-        System.out.println("Player" + players.poll().getId() + " wins the game!");
+        System.out.println("Player " + winner.getName() + " wins the game!");
     }
 }

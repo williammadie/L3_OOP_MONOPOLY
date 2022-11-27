@@ -17,8 +17,9 @@ public class MonopolyGame {
         }
 
         public void nextTour(Player player) {
-                System.out.println("\nTurn n°" + this.turnCounter + ": " + player.getId() + " is playing:");
+                System.out.println("\nTurn n°" + this.turnCounter + ": " + player.getName() + " is playing:");
                 System.out.println(player.toString());
+
                 // Building Phase
                 player.makeChoice(GameAction.BUY_HOUSE);
 

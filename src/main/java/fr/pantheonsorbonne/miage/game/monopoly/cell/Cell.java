@@ -4,6 +4,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public abstract class Cell {
     public static final int MAX_HOUSE_NUMBER = 4;
+    private static final int NO_PRICE = 0;
     private static int cellIdCounter = 0;
     protected String name;
     protected int cellId;
@@ -21,11 +22,19 @@ public abstract class Cell {
         return this.name;
     }
 
+    public Color getColor() {
+        return Color.COLORLESS;
+    }
+
+    public int getPrice() {
+        return NO_PRICE;
+    }
+
     public abstract void trigger(Player player);
 
     public abstract void buyCell(Player player) throws CellCannotBeBoughtException;
 
-    public abstract void sellCell(Player player) throws CellCannotBeBoughtException;
+    public abstract void sellCell(Player player) throws CellCannotBeSoldException;
 
     public abstract void buyHouse(Player player) throws CellCannotBeBuiltException;
 

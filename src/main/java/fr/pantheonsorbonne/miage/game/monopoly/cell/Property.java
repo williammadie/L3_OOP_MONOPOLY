@@ -4,6 +4,8 @@ import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public abstract class Property extends Cell {
+    public static final double SELLING_PRICE_COEFFICIENT = 0.75;
+    private static final int NO_HOUSE = 0;
     protected int price;
     protected Player owner;
     protected Color color;
@@ -27,16 +29,22 @@ public abstract class Property extends Cell {
         return this.owner == null;
     }
 
+    @Override
     public Color getColor() {
         return this.color;
     }
 
+    @Override
     public int getPrice() {
         return this.price;
     }
 
+    public int getHouseNumber() {
+        return NO_HOUSE;
+    }
+
     private void payRent(Player player) {
-        System.out.println(player.getId() + " has to pay " + this.getRentValue() + "Eur to " + this.owner);
+        System.out.println(player.getName() + " has to pay " + this.getRentValue() + "Eur to " + this.owner.getName());
         player.pay(this.getRentValue(), this.owner);
     }
 
@@ -62,15 +70,20 @@ public abstract class Property extends Cell {
         if (!this.isVacant())
             throw new CellCannotBeBoughtException("Cell is already occupied.");
 
-        System.out.println(player.getId() + " buys cell " + super.name);
+        player.removeMoney(price);
+        System.out.println(player.getName() + " buys cell " + super.name + " for " + this.price + "Eur");
         player.addProperty(this);
     }
 
     @Override
-    public void sellCell(Player player) throws CellCannotBeBoughtException {
+    public void sellCell(Player player) throws CellCannotBeSoldException {
         if (!this.owner.equals(player))
-            throw new CellCannotBeBoughtException("Cannot sell the cell " + super.name);
+            throw new CellCannotBeSoldException(
+                    "Cell " + super.name + " does not belong to player " + player.getName());
 
+        double sellingPrice = this.price * Property.SELLING_PRICE_COEFFICIENT;
+        player.addMoney((int) sellingPrice);
+        System.out.println(player.getName() + " sells " + this.name + " for " + sellingPrice + "Eur");
         player.removeProperty(this);
     }
 

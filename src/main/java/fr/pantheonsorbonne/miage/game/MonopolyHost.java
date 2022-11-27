@@ -15,8 +15,8 @@ import fr.pantheonsorbonne.miage.model.Game;
 
 public class MonopolyHost {
     public static void main(String[] args) {
-        PlayerFacade playerFacade = (PlayerFacade) Facade.getFacade();
-        HostFacade hostFacade = (HostFacade) Facade.getFacade();
+        PlayerFacade playerFacade = Facade.getFacade();
+        HostFacade hostFacade = Facade.getFacade();
         List<Player> playersInSession = new ArrayList<>();
         hostFacade.waitReady();
 
@@ -29,25 +29,8 @@ public class MonopolyHost {
             Game game = hostFacade.createNewGame("monopoly-room-1");
             hostFacade.waitForExtraPlayerCount(2);
             playersInSession.addAll(game.getPlayers().stream().map(playerName -> new NetworkPlayer(playerName, playerFacade, game)).toList());
-            playTheGame(playerFacade, game, playersInSession);
+            Player winner = GameLogic.playTheGame(playersInSession);
+            System.out.println(winner.getName() + " wins the game!");
         }
-    }
-
-    private static void playTheGame(PlayerFacade playerFacade, Game game, List<Player> playersInSession) {
-        MonopolyGame monopolyGame = new MonopolyGame(playersInSession);
-        Deque<Player> players = GameLogic.determinePlayersOrder(playersInSession);
-        
-        // Gameloop
-        do {
-            Player currentPlayer = players.poll();
-
-            if (!currentPlayer.isBankrupt()) {
-                monopolyGame.nextTour(currentPlayer);
-                System.out.println("Player " + currentPlayer.getId() + " is playing! " + currentPlayer.toString() + "\n");
-                players.add(currentPlayer);
-            } else {
-                System.out.println("Player" + currentPlayer.getId() + " is bankrupt!");
-            }
-        } while (players.size() > 1);
     }
 }
