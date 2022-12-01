@@ -14,7 +14,7 @@ public class Station extends Property {
     public int getRentValue() {
         int numberOfStationsOwned = (int) this.owner.getProperties().stream()
                 .filter(x -> STATIONS_CELL_ID.contains(x.getCellId())).count();
-        System.out.println(this.owner + " has " + numberOfStationsOwned + " stations");
+        System.out.println(this.owner.getName() + " has " + numberOfStationsOwned + " stations");
         switch (numberOfStationsOwned) {
             case 1:
                 return 25;

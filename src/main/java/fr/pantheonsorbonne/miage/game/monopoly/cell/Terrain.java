@@ -13,6 +13,7 @@ public class Terrain extends Property {
         this.houseNumber = 0;
     }
 
+    @Override
     public int getHouseNumber() {
         return this.houseNumber;
     }
@@ -48,7 +49,6 @@ public class Terrain extends Property {
     }
 
     private boolean isBuildable() {
-
         if (this.owner == null)
             return false;
 
@@ -59,6 +59,13 @@ public class Terrain extends Property {
             return false;
 
         return doOtherCellsOfColorHaveAtLeast(this.houseNumber);
+    }
+
+    private boolean isSoldable() {
+        if (this.houseNumber == 0)
+            return false;
+
+        return doOtherCellsOfColorHaveAtMost(this.houseNumber);
     }
 
     private static boolean doPlayerHasAllTerrainOfColor(Player player, Color color) {
@@ -74,11 +81,21 @@ public class Terrain extends Property {
         }
     }
 
-    public boolean doOtherCellsOfColorHaveAtLeast(int requiredMinimumHouseNumber) {
+    public boolean doOtherCellsOfColorHaveAtLeast(int minimumRequiredHouseNumber) {
         boolean result = true;
         for (Property property : this.owner.getProperties(this.color)) {
-            Terrain terrain = (Terrain) property;
-            if (terrain.getHouseNumber() < requiredMinimumHouseNumber) {
+            if (property.getHouseNumber() < minimumRequiredHouseNumber) {
+                result = false;
+                break;
+            }
+        }
+        return result;
+    }
+
+    public boolean doOtherCellsOfColorHaveAtMost(int maximumRequiredHouseNumber) {
+        boolean result = true;
+        for (Property property : this.owner.getProperties(this.color)) {
+            if (property.getHouseNumber() > maximumRequiredHouseNumber) {
                 result = false;
                 break;
             }
@@ -94,7 +111,8 @@ public class Terrain extends Property {
         if (!this.isBuildable())
             throw new CellCannotBeBuiltException("Cell " + super.name + " is unbuildable");
 
-        System.out.println(player.getId() + " buys a new house at cell " + super.name);
+        player.removeMoney(getHousePrice());
+        System.out.println(player.getName() + " buys a new house at cell " + super.name);
         this.buildNewHouse();
     }
 
@@ -103,7 +121,12 @@ public class Terrain extends Property {
         if (this.houseNumber == 0)
             throw new CellCannotBeBuiltException("Cannot sell house on cell " + super.name);
 
-        System.out.println(player.getId() + " sells a house at cell " + super.name);
+        if (!this.isSoldable())
+            throw new CellCannotBeBuiltException("Cell " + super.name + " is unsoldable");
+
+        double sellingPrice = getHousePrice() * Property.SELLING_PRICE_COEFFICIENT;
+        player.addMoney((int) sellingPrice);
+        System.out.println(player.getName() + " sells a house at cell " + super.name + " for " + sellingPrice + "Eur");
         this.houseNumber--;
     }
 

@@ -23,11 +23,11 @@ public class NetworkPlayer extends Player {
     public void makeChoice(GameAction possibleAction) {
         switch (possibleAction) {
             case BUY_HOUSE:
-                playerFacade.sendGameCommandToPlayer(game, this.getId(),
+                playerFacade.sendGameCommandToPlayer(game, this.getName(),
                         new GameCommand(GameAction.BUY_HOUSE.name(), Integer.toString(this.pawnPosition)));
                 break;
             case BUY_CELL:
-                playerFacade.sendGameCommandToPlayer(game, this.getId(),
+                playerFacade.sendGameCommandToPlayer(game, this.getName(),
                         new GameCommand(GameAction.BUY_CELL.name(), Integer.toString(this.pawnPosition)));
 
                 GameCommand command = playerFacade.receiveGameCommand(game);
@@ -38,11 +38,11 @@ public class NetworkPlayer extends Player {
                     if (command.body().equals(Integer.toString(this.pawnPosition))) {
                         Cell currentCell = Board.getCellWithId(this.pawnPosition);
                         currentCell.buyCell(this);
-                        playerFacade.sendGameCommandToPlayer(game, this.getId(),
+                        playerFacade.sendGameCommandToPlayer(game, this.getName(),
                                 new GameCommand(GameAction.CONFIRM_ACTION.name()));
                     }
                 } catch (CellCannotBeBoughtException e) {
-                    playerFacade.sendGameCommandToPlayer(game, this.getId(),
+                    playerFacade.sendGameCommandToPlayer(game, this.getName(),
                             new GameCommand(GameAction.ABORT_ACTION.name()));
                 }
 
@@ -56,14 +56,14 @@ public class NetworkPlayer extends Player {
     @Override
     public void addMoney(int price) {
         super.addMoney(price);
-        playerFacade.sendGameCommandToPlayer(game, this.getId(),
+        playerFacade.sendGameCommandToPlayer(game, this.getName(),
                 new GameCommand(GameAction.SEND_MONEY.name(), Integer.toString(price)));
     }
 
     @Override
     public void movePawnTo(int cellId) {
         super.movePawnTo(cellId);
-        playerFacade.sendGameCommandToPlayer(game, this.getId(),
+        playerFacade.sendGameCommandToPlayer(game, this.getName(),
                 new GameCommand(GameAction.MOVE_PAWN_TO.name(), Integer.toString(cellId)));
     }
 

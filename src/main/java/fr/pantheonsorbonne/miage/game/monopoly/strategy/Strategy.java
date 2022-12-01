@@ -1,5 +1,7 @@
 package fr.pantheonsorbonne.miage.game.monopoly.strategy;
 
+import java.util.NoSuchElementException;
+
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
@@ -7,61 +9,93 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBoughtException;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBuiltException;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
-
-import fr.pantheonsorbonne.miage.game.monopoly.cell.StartingPoint;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeSoldException;
 
 public interface Strategy {
 
-    default void makeChoice(GameAction gameAction, Player player) {
-        switch (gameAction) {
+    default void makeChoice(GameAction possibleAction, Player player) {
+        switch (possibleAction) {
             case BUY_CELL:
-                if (doBuyCell(player)) {
-                    Cell currentCell = Board.getCellWithId(player.getPawnPosition());
-                    try {
-                        currentCell.buyCell(player);
-                    } catch (CellCannotBeBoughtException e) {
-                        e.printStackTrace();
-                    }
-                }
+                handleBuyCell(player);
                 break;
             case SELL_CELL:
-                if (player.getProperties().isEmpty()) {
-                    break;
-                }
-                player.getProperties().get(0).sellCell(player);
+                handleSellCell(player);
                 break;
 
             case BUY_HOUSE:
-                if (doBuyHouse(player)) {
-                    for (Property property : player.getProperties()) {
-                        try {
-                            property.buyHouse(player);
-                            break;
-                        } catch (CellCannotBeBuiltException e) {
-                            continue;
-                        }
-                    }
-                }
+                handleBuyHouse(player);
                 break;
 
             case SELL_HOUSE:
-                for (Property property : player.getProperties()) {
-                    if (player.getProperties().isEmpty() || property.getHouseNumber() == 0) {
-                        continue;
-                    }
-                    try {
-                        property.sellHouse(player);
-                        break;
-                    } catch (CellCannotBeBuiltException e) {
-                        continue;
-                    }
-
-                }
+                handleSellHouse(player);
                 break;
 
             default:
-                break;
+                throw new NoSuchElementException("Player choice required for unexpected case: " + possibleAction);
+        }
+    }
+
+    default void handleBuyCell(Player player) {
+        if (!doBuyCell(player))
+            return;
+
+        Cell currentCell = Board.getCellWithId(player.getPawnPosition());
+        try {
+            currentCell.buyCell(player);
+        } catch (CellCannotBeBoughtException e) {
+            e.printStackTrace();
+            System.exit(2);
+        }
+    }
+
+    default void handleSellCell(Player player) {
+        if (player.getProperties().isEmpty())
+            return;
+
+        try {
+            player.getProperties().get(0).sellCell(player);
+        } catch (CellCannotBeSoldException e1) {
+            e1.printStackTrace();
+            System.exit(2);
+        }
+    }
+
+    default void handleBuyHouse(Player player) {
+        if (!doBuyHouse(player))
+            return;
+
+        for (Property property : player.getProperties()) {
+            if (tryToBuyHouse(player, property))
+                return;
+        }
+    }
+
+    default void handleSellHouse(Player player) {
+        for (Property property : player.getProperties()) {
+            if (tryToSellHouse(player, property))
+                return;
+        }
+    }
+
+    default boolean tryToBuyHouse(Player player, Property property) {
+        try {
+            property.buyHouse(player);
+            return true;
+        } catch (CellCannotBeBuiltException e) {
+            return false;
+        }
+    }
+
+    default boolean tryToSellHouse(Player player, Property property) {
+        if (player.getProperties().isEmpty() || property.getHouseNumber() == 0) {
+            return false;
+        }
+
+        try {
+            property.sellHouse(player);
+            return true;
+        } catch (CellCannotBeBuiltException e) {
+            return false;
         }
     }
 
