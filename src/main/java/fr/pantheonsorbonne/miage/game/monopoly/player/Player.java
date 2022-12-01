@@ -100,12 +100,10 @@ public class Player {
         }
     }
 
-
     public void removeProperty(Property p) {
         this.properties.remove(p);
         p.setOwner(null);
     }
-
 
     public void pay(int moneyAmount, Player moneyReceiver) {
         this.removeMoney(moneyAmount);
@@ -160,7 +158,6 @@ public class Player {
     public void getStartingBonus() {
         if (this.isJailed)
             return;
-
         this.addMoney(StartingPoint.MONEY_GIFT_AMOUNT);
     }
 
