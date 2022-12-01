@@ -20,6 +20,8 @@ public class MonopolyGame {
                 System.out.println("\nTurn n°" + this.turnCounter + ": " + player.getName() + " is playing:");
                 System.out.println(player.toString());
 
+                if (!player.isSynchronized())
+                        throw new IllegalStateException("Distant player and local player might be desynchronized");
                 // Building Phase
                 player.makeChoice(GameAction.BUY_HOUSE);
 
@@ -34,6 +36,6 @@ public class MonopolyGame {
         }
 
         private void sendMoneyToAllPlayers(int moneyAmount) {
-                this.players.forEach(player -> player.addMoney(moneyAmount));
+                this.players.forEach(player -> player.addMoneySafe(moneyAmount));
         }
 }

@@ -4,7 +4,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-public class BuyAbovePrice extends CommonActions {
+public class BuyAbovePrice extends Strategy {
 
     @Override
     public boolean doBuyCell(Player player) {

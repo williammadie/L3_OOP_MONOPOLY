@@ -8,8 +8,7 @@ public enum GameAction {
     MOVE_PAWN_TO,
     SEND_MONEY_TO,
     SEND_MONEY,
-    CONFIRM_ACTION,
-    ABORT_ACTION,
+    CHECK_BALANCE,
     DO_NOTHING,
     GAME_OVER
 }

@@ -78,16 +78,24 @@ public class Player {
         this.isJailed = state;
     }
 
+    public Strategy getStrategy() {
+        return this.strategy;
+    }
+
     public boolean isBankrupt() {
         return balance <= 0 && properties.isEmpty();
     }
 
 
-    public void addMoney(int price) {
+    public final void addMoney(int price) {
         balance += price;
     }
 
-    public void removeMoney(int price) {
+    public void addMoneySafe(int price) {
+        this.addMoney(price);
+    }
+
+    public final void removeMoney(int price) {
         while (this.getBalance() < price) {
             if (this.properties.isEmpty())
                 break;
@@ -100,9 +108,12 @@ public class Player {
         balance -= price;
     }
 
+    public void removeMoneySafe(int price) {
+        this.removeMoney(price);
+    }
+
     public void addProperty(Property p) {
-        if (p.isVacant() && balance >= p.getPrice()) {
-            this.balance -= p.getPrice();
+        if (p.isVacant()) {
             this.properties.add(p);
             p.setOwner(this);
         }
@@ -120,8 +131,9 @@ public class Player {
 
 
     public void pay(int moneyAmount, Player moneyReceiver) {
-        this.removeMoney(moneyAmount);
-        moneyReceiver.addMoney(moneyAmount);
+        this.removeMoneySafe(moneyAmount);
+        System.out.println("Pay");
+        moneyReceiver.addMoneySafe(moneyAmount);
     }
 
     public void makeChoice(GameAction possibleAction) {
@@ -135,17 +147,25 @@ public class Player {
 
     public void movePawnTo(int cellId) {
         if (cellId < this.pawnPosition && cellId != 0)
-            getStartingBonus();
+            getStartingBonus(false);
 
         System.out.println(this.getName() + " moves to cell n°" + cellId);
         this.pawnPosition = cellId;
     }
 
-    public void getStartingBonus() {
+    public void getStartingBonus(boolean isSafe) {
         if (this.isJailed)
             return;
 
-        this.addMoney(StartingPoint.MONEY_GIFT_AMOUNT);
+        System.out.println("New turn! " + this.getName() + " receives " + StartingPoint.MONEY_GIFT_AMOUNT + "Eur");
+        if (isSafe)
+            this.addMoneySafe(StartingPoint.MONEY_GIFT_AMOUNT);
+        else
+            this.addMoney(StartingPoint.MONEY_GIFT_AMOUNT);
+    }
+
+    public boolean isSynchronized() {
+        return true;
     }
 
     public String toString() {

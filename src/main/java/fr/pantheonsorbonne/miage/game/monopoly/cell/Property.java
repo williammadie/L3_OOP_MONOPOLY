@@ -82,6 +82,7 @@ public abstract class Property extends Cell {
                     "Cell " + super.name + " does not belong to player " + player.getName());
 
         double sellingPrice = this.price * Property.SELLING_PRICE_COEFFICIENT;
+        System.out.println("Sell Cell");
         player.addMoney((int) sellingPrice);
         System.out.println(player.getName() + " sells " + this.name + " for " + sellingPrice + "Eur");
         player.removeProperty(this);

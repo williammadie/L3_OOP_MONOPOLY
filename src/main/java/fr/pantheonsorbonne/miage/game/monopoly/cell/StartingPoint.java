@@ -11,7 +11,7 @@ public class StartingPoint extends Special {
 
     @Override
     public void trigger(Player player) {
-        player.getStartingBonus();
+        player.getStartingBonus(true);
     }
 
 }

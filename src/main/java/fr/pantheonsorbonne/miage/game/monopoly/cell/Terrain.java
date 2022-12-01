@@ -125,6 +125,7 @@ public class Terrain extends Property {
             throw new CellCannotBeBuiltException("Cell " + super.name + " is unsoldable");
 
         double sellingPrice = getHousePrice() * Property.SELLING_PRICE_COEFFICIENT;
+        System.out.println("Sell House");
         player.addMoney((int) sellingPrice);
         System.out.println(player.getName() + " sells a house at cell " + super.name + " for " + sellingPrice + "Eur");
         this.houseNumber--;

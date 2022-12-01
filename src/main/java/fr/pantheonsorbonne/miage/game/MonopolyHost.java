@@ -1,16 +1,15 @@
 package fr.pantheonsorbonne.miage.game;
 
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 
 import fr.pantheonsorbonne.miage.Facade;
 import fr.pantheonsorbonne.miage.HostFacade;
 import fr.pantheonsorbonne.miage.PlayerFacade;
 import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
-import fr.pantheonsorbonne.miage.game.monopoly.MonopolyGame;
 import fr.pantheonsorbonne.miage.game.monopoly.player.NetworkPlayer;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyAbovePrice;
 import fr.pantheonsorbonne.miage.model.Game;
 
 public class MonopolyHost {
@@ -20,8 +19,8 @@ public class MonopolyHost {
         List<Player> playersInSession = new ArrayList<>();
         hostFacade.waitReady();
 
-        Player host = new Player("host");
-        playerFacade.createNewPlayer("host");        
+        Player host = new Player(GameLogic.generateUniquePlayerName(), new BuyAbovePrice());
+        playerFacade.createNewPlayer(host.getName());        
         playersInSession.add(host);
 
         // Launch a new game until the programs is stopped

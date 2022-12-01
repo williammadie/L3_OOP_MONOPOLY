@@ -12,7 +12,7 @@ public class Tax extends Special {
 
     @Override
     public void trigger(Player player) {
-        player.removeMoney(taxAmount);
+        player.removeMoneySafe(taxAmount);
     }
     
 }
