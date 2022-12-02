@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.miage.game.monopoly.MonopolyGame;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBoughtException;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBuiltException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuyException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuildException;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.AlwaysBuy;
 
@@ -26,7 +26,7 @@ class CellTest {
     private Player adversary;
 
     @BeforeEach
-    void setUp() throws CellCannotBeBoughtException {
+    void setUp() throws CannotBuyException {
         this.player = new Player("testPlayer", new AlwaysBuy());
         this.adversary = new Player("testAdversary");
         player.addMoney(20000);
@@ -52,7 +52,6 @@ class CellTest {
 
     @Test
     void testStationVacantTrigger() {
-        // TODO : Check that the player is created with Strategy ALWAYS_BUY
         Cell vacantStation = Board.getCellWithId(15);
         player.movePawnTo(15);
         vacantStation.trigger(player);
@@ -97,7 +96,7 @@ class CellTest {
     }
 
     @Test
-    void testRentTerrainNoHouse() throws CellCannotBeBoughtException {
+    void testRentTerrainNoHouse() throws CannotBuyException {
         Cell lastTerrain = Board.getCellWithId(39);
         Cell beforeLastTerrain = Board.getCellWithId(37);
         lastTerrain.buyCell(adversary);
@@ -108,7 +107,7 @@ class CellTest {
     }
 
     @Test
-    void testRentTerrainFullColor() throws CellCannotBeBoughtException {
+    void testRentTerrainFullColor() throws CannotBuyException {
         Cell lastTerrain = Board.getCellWithId(39);
         Cell beforeLastTerrain = Board.getCellWithId(37);
         lastTerrain.buyCell(adversary);
@@ -119,7 +118,7 @@ class CellTest {
     }
 
     @Test
-    void testRentTerrainWithHouses() throws CellCannotBeBoughtException, CellCannotBeBuiltException {
+    void testRentTerrainWithHouses() throws CannotBuyException, CannotBuildException {
         Cell lastTerrain = Board.getCellWithId(39);
         Cell beforeLastTerrain = Board.getCellWithId(37);
         lastTerrain.buyCell(adversary);
@@ -148,7 +147,7 @@ class CellTest {
     }
 
     @Test
-    void testRentStation() throws CellCannotBeBoughtException {
+    void testRentStation() throws CannotBuyException {
         Cell firstSation = Board.getCellWithId(5);
         Cell secondStation = Board.getCellWithId(15);
         Cell thirdSation = Board.getCellWithId(25);
@@ -172,7 +171,7 @@ class CellTest {
     }
 
     @RepeatedTest(10)
-    void testRentPublicService() throws CellCannotBeBoughtException {
+    void testRentPublicService() throws CannotBuyException {
         Cell firstPublicService = Board.getCellWithId(12);
         Cell secondPublicService = Board.getCellWithId(28);
 

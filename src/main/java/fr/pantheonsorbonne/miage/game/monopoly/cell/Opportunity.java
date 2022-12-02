@@ -18,22 +18,22 @@ public class Opportunity extends Special {
                 int bonusAmount = GameLogic.getRandomNumberBetween(OPPORTUNITY_MIN_MONEY_AMOUNT, OPPORTUNITY_MAX_MONEY_AMOUNT);
                 System.out.println("Opportunity");
                 player.addMoneySafe(bonusAmount);
-                System.out.println("Player " + player.getName() + " receives a bonus of " + bonusAmount + "Eur");
+                System.out.println(player.getName() + " receives a bonus of " + bonusAmount + "Eur");
                 break;
             case 1:
             int penaltyAmount = GameLogic.getRandomNumberBetween(OPPORTUNITY_MIN_MONEY_AMOUNT, OPPORTUNITY_MAX_MONEY_AMOUNT);
                 player.removeMoneySafe(penaltyAmount);
-                System.out.println("Player " + player.getName() + " pays a penalty of " + penaltyAmount + "Eur");
+                System.out.println(player.getName() + " pays a penalty of " + penaltyAmount + "Eur");
                 break;
             case 2:
                 player.movePawnTo(Jail.JAIL_CELL_ID);
                 player.setIsJailed(true);
-                System.out.println("Player " + player.getName() + " is jailed!");
+                System.out.println(player.getName() + " is jailed!");
                 break;
             default:
                 int delta = GameLogic.getRandomNumberBetween(10, 40);
                 player.movePawnOf(delta);
-                System.out.println("Player " + player.getName() + " moves his/her pawn of " + delta + " cells!");
+                System.out.println(player.getName() + " moves his/her pawn of " + delta + " cells!");
         }
     }
 

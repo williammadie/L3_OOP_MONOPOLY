@@ -27,10 +27,7 @@ public class BuyColorOnly extends Strategy {
     @Override
     public boolean doBuyCell(Player player) {
         Cell currentCell = Board.getCellWithId(player.getPawnPosition());
-        System.out.println(colors.contains(currentCell.getColor()));
-        System.out.println(currentCell.getName());
         return colors.contains(currentCell.getColor());
-
     }
 
 }

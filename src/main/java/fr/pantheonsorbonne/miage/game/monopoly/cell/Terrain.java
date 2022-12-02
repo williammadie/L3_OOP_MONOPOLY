@@ -104,12 +104,12 @@ public class Terrain extends Property {
     }
 
     @Override
-    public void buyHouse(Player player) throws CellCannotBeBuiltException {
+    public void buyHouse(Player player) throws CannotBuildException {
         if (player.getBalance() < this.color.housePrice)
-            throw new CellCannotBeBuiltException("Player doesn't have required amount for buying a house.");
+            throw new CannotBuildException("Player doesn't have required amount for buying a house.");
 
         if (!this.isBuildable())
-            throw new CellCannotBeBuiltException("Cell " + super.name + " is unbuildable");
+            throw new CannotBuildException("Cell " + super.name + " is unbuildable");
 
         player.removeMoney(getHousePrice());
         System.out.println(player.getName() + " buys a new house at cell " + super.name);
@@ -117,12 +117,12 @@ public class Terrain extends Property {
     }
 
     @Override
-    public void sellHouse(Player player) throws CellCannotBeBuiltException {
+    public void sellHouse(Player player) throws CannotBuildException {
         if (this.houseNumber == 0)
-            throw new CellCannotBeBuiltException("Cannot sell house on cell " + super.name);
+            throw new CannotBuildException("Cannot sell house on cell " + super.name);
 
         if (!this.isSoldable())
-            throw new CellCannotBeBuiltException("Cell " + super.name + " is unsoldable");
+            throw new CannotBuildException("Cell " + super.name + " is unsoldable");
 
         double sellingPrice = getHousePrice() * Property.SELLING_PRICE_COEFFICIENT;
         System.out.println("Sell House");

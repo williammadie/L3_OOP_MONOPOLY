@@ -4,6 +4,7 @@ import java.util.List;
 
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
+import fr.pantheonsorbonne.miage.game.monopoly.player.DesynchronizedPlayerException;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public class MonopolyGame {
@@ -21,7 +22,7 @@ public class MonopolyGame {
                 System.out.println(player.toString());
 
                 if (!player.isSynchronized())
-                        throw new IllegalStateException("Distant player and local player might be desynchronized");
+                        throw new DesynchronizedPlayerException();
                 // Building Phase
                 player.makeChoice(GameAction.BUY_HOUSE);
 

@@ -162,15 +162,7 @@ public class GameLogic {
                 break;
 
             case SELL_HOUSE:
-                int cellToSellHouseId = me.getStrategy().handleSellCell(me);
-
-                if (cellToSellHouseId == -1) {
-                    facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
-                            new GameCommand(GameAction.SEND_MONEY.name(),
-                                    Integer.toString(cellToSellHouseId)));
-                    break;
-                }
-
+                int cellToSellHouseId = me.getStrategy().handleSellHouse(me);
                 facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
                         new GameCommand(GameAction.SELL_HOUSE.name(), Integer.toString(cellToSellHouseId)));
                 break;
@@ -211,7 +203,7 @@ public class GameLogic {
                 monopolyGame.nextTour(currentPlayer);
                 players.add(currentPlayer);
             } else {
-                System.out.println("Player " + currentPlayer.getName() + " went bankrupt!\n");
+                currentPlayer.declareGameOver();
             }
         } while (players.size() > 1);
 

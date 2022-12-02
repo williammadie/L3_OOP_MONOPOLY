@@ -1,10 +1,8 @@
 package fr.pantheonsorbonne.miage.game;
 
 import java.util.Arrays;
-import java.util.Deque;
 import java.util.List;
 
-import fr.pantheonsorbonne.miage.game.monopoly.MonopolyGame;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.AlwaysBuy;

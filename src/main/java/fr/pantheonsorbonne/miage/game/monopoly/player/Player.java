@@ -132,7 +132,6 @@ public class Player {
 
     public void pay(int moneyAmount, Player moneyReceiver) {
         this.removeMoneySafe(moneyAmount);
-        System.out.println("Pay");
         moneyReceiver.addMoneySafe(moneyAmount);
     }
 
@@ -166,6 +165,10 @@ public class Player {
 
     public boolean isSynchronized() {
         return true;
+    }
+
+    public void declareGameOver() {
+        System.out.println(this.name + " went bankrupt!\n");
     }
 
     public String toString() {
