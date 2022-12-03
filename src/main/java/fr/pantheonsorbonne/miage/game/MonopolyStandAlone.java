@@ -5,7 +5,7 @@ import java.util.List;
 
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
-import fr.pantheonsorbonne.miage.game.monopoly.strategy.AlwaysBuy;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.Hybrid;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyAbovePrice;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyColorOnly;
 import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
@@ -13,7 +13,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 public class MonopolyStandAlone {
     public static void main(String[] args) {
         List<Player> playersInSession = Arrays.asList(
-                new Player(GameLogic.generateUniquePlayerName(), new AlwaysBuy()),
+                new Player(GameLogic.generateUniquePlayerName(), new Hybrid()),
                 new Player(GameLogic.generateUniquePlayerName(), new BuyAbovePrice()),
                 new Player(GameLogic.generateUniquePlayerName(), new BuyColorOnly(Color.ORANGE)));
 

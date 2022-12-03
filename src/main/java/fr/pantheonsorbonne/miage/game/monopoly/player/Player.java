@@ -11,7 +11,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.StartingPoint;
-import fr.pantheonsorbonne.miage.game.monopoly.strategy.AlwaysBuy;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.Hybrid;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.Strategy;
 
 public class Player {
@@ -20,6 +20,7 @@ public class Player {
     private Strategy strategy;
     protected int pawnPosition;
     private int rank;
+    private int turnsPlayed;
     private int balance;
     private boolean isJailed;
 
@@ -28,9 +29,10 @@ public class Player {
         this.properties = new ArrayList<>();
         this.pawnPosition = 0;
         this.rank = -1;
+        this.turnsPlayed = 0;
         this.balance = 0;
         this.isJailed = false;
-        this.strategy = new AlwaysBuy();
+        this.strategy = new Hybrid();
     }
 
     public Player(String name, Strategy strategy) {
@@ -48,6 +50,10 @@ public class Player {
 
     public int getRank() {
         return this.rank;
+    }
+
+    public void refreshTurnsCounter() {
+        this.turnsPlayed++;
     }
 
     public int getPawnPosition() {
@@ -86,7 +92,6 @@ public class Player {
         return balance <= 0 && properties.isEmpty();
     }
 
-
     public final void addMoney(int price) {
         balance += price;
     }
@@ -99,10 +104,10 @@ public class Player {
         while (this.getBalance() < price) {
             if (this.properties.isEmpty())
                 break;
-            
+
             if (countPlayerHouses() != 0)
                 this.makeChoice(GameAction.SELL_HOUSE);
-            else 
+            else
                 this.makeChoice(GameAction.SELL_CELL);
         }
         balance -= price;
@@ -119,16 +124,20 @@ public class Player {
         }
     }
 
-
     public void removeProperty(Property p) {
         this.properties.remove(p);
         p.setOwner(null);
     }
 
+    public int getOwnedPropertyNumberWithColor(Color color) {
+        return (int) this.getProperties().stream()
+                .map(Property::getColor)
+                .filter(propertyColor -> propertyColor == color).count();
+    }
+
     public int countPlayerHouses() {
         return this.properties.stream().map(Property::getHouseNumber).mapToInt(Integer::intValue).sum();
     }
-
 
     public void pay(int moneyAmount, Player moneyReceiver) {
         this.removeMoneySafe(moneyAmount);
@@ -153,7 +162,7 @@ public class Player {
     }
 
     public void getStartingBonus(boolean isSafe) {
-        if (this.isJailed)
+        if (this.isJailed || this.turnsPlayed > 50)
             return;
 
         System.out.println("New turn! " + this.getName() + " receives " + StartingPoint.MONEY_GIFT_AMOUNT + "Eur");
@@ -163,12 +172,28 @@ public class Player {
             this.addMoney(StartingPoint.MONEY_GIFT_AMOUNT);
     }
 
+    public int calculateBuyingWish(Player player, Color color) {
+
+        if (color.equals(Color.COLORLESS))
+            return 100;
+
+        if (player.getProperties().size() < 3) {
+            System.out.println(Board.getNumberOfAdversaryOwnersForColor(player, color) + " adversaries");
+            return Board.getNumberOfAdversaryOwnersForColor(player, color) > 0 ? 0 : 100;
+        }
+
+        return (getOwnedPropertyNumberWithColor(color) + 1 / Board.getExistingCellNumberWithColor(color)) * 100;
+    }
+
     public boolean isSynchronized() {
         return true;
     }
 
-    public void declareGameOver() {
-        System.out.println(this.name + " went bankrupt!\n");
+    public void declareGameOver(String status) {
+        if (status.equals("winner"))
+            System.out.println(this.name + " wins the game!");
+        else
+            System.out.println(this.name + " went bankrupt!\n");
     }
 
     public String toString() {

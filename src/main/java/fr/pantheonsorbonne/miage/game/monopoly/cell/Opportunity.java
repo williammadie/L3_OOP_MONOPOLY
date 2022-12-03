@@ -5,7 +5,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 public class Opportunity extends Special {
     private static final int OPPORTUNITY_MIN_MONEY_AMOUNT = 10;
-    private static final int OPPORTUNITY_MAX_MONEY_AMOUNT = 500;
+    private static final int OPPORTUNITY_MAX_MONEY_AMOUNT = 100;
 
     public Opportunity(String name) {
         super(name);

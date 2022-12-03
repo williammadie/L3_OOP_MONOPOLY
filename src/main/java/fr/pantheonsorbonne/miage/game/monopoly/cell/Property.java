@@ -17,6 +17,7 @@ public abstract class Property extends Cell {
         this.owner = null;
     }
 
+    @Override
     public Player getOwner() {
         return this.owner;
     }

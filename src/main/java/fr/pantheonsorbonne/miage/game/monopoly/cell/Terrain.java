@@ -69,9 +69,7 @@ public class Terrain extends Property {
     }
 
     private static boolean doPlayerHasAllTerrainOfColor(Player player, Color color) {
-        int propertyNumberWithGivenColor = (int) player.getProperties().stream()
-                .map(Property::getColor)
-                .filter(propertyColor -> propertyColor == color).count();
+        int propertyNumberWithGivenColor = player.getOwnedPropertyNumberWithColor(color);
         switch (color) {
             case BROWN:
             case DEEP_BLUE:

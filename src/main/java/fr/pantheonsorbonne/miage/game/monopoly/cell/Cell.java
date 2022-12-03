@@ -30,6 +30,10 @@ public abstract class Cell {
         return NO_PRICE;
     }
 
+    public Player getOwner() {
+        return null;
+    }
+
     public abstract void trigger(Player player);
 
     public abstract void buyCell(Player player) throws CannotBuyException;

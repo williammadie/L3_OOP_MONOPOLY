@@ -18,7 +18,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuyException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuildException;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
-import fr.pantheonsorbonne.miage.game.monopoly.strategy.AlwaysBuy;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.Hybrid;
 
 class CellTest {
 
@@ -27,7 +27,7 @@ class CellTest {
 
     @BeforeEach
     void setUp() throws CannotBuyException {
-        this.player = new Player("testPlayer", new AlwaysBuy());
+        this.player = new Player("testPlayer", new Hybrid());
         this.adversary = new Player("testAdversary");
         player.addMoney(20000);
         adversary.addMoney(20000);

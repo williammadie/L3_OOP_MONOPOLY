@@ -92,10 +92,20 @@ public class NetworkPlayer extends Player {
     }
 
     @Override
-    public void declareGameOver() {
-        super.declareGameOver();
+    public void declareGameOver(String status) {
+        super.declareGameOver(status);
+        if (status.equals("winner"))
+            playerFacade.sendGameCommandToPlayer(game, this.getName(),
+                    new GameCommand(GameAction.GAME_OVER.name(), "winner"));
+        else
+            playerFacade.sendGameCommandToPlayer(game, this.getName(),
+                    new GameCommand(GameAction.GAME_OVER.name(), "loser"));
+    }
+
+    @Override
+    public void refreshTurnsCounter() {
         playerFacade.sendGameCommandToPlayer(game, this.getName(),
-                new GameCommand(GameAction.GAME_OVER.name(), "loser"));
+                new GameCommand(GameAction.END_TURN.name()));
     }
 
     private void handleBuyHouse() {
@@ -124,7 +134,7 @@ public class NetworkPlayer extends Player {
                 new GameCommand(GameAction.BUY_CELL.name(), Integer.toString(this.pawnPosition)));
 
         GameCommand command = playerFacade.receiveGameCommand(game);
-        if (!command.name().equals(GameAction.SEND_MONEY.name()))
+        if (!command.name().equals(GameAction.BUY_CELL.name()))
             throw new UnexpectedCommandException(command.name());
 
         if (Integer.parseInt(command.body()) == GameAction.ABORT_ACTION.value)

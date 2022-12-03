@@ -13,12 +13,10 @@ import com.github.javafaker.Faker;
 
 import fr.pantheonsorbonne.miage.PlayerFacade;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Terrain;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 import fr.pantheonsorbonne.miage.game.monopoly.player.PlayerRankComparator;
-import fr.pantheonsorbonne.miage.game.monopoly.strategy.AlwaysBuy;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.Hybrid;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyAbovePrice;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyColorOnly;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.Strategy;
@@ -59,6 +57,10 @@ public class GameLogic {
         return new Faker().name().firstName();
     }
 
+    public static Color getRandomColor() {
+        return Color.values()[getRandomNumberBetween(0, Color.values().length - 1)];
+    }
+
     public static Strategy selectStrategy(Player player) {
         int selectedNumber;
         Strategy selectedStrategy;
@@ -80,7 +82,7 @@ public class GameLogic {
         switch (selectedNumber) {
             case 0:
                 System.out.println("AlwaysBuy Strategy selected");
-                selectedStrategy = new AlwaysBuy();
+                selectedStrategy = new Hybrid();
                 break;
             case 1:
                 System.out.println("BuyAbovePrice Strategy selected");
@@ -128,16 +130,9 @@ public class GameLogic {
                             "Local and distant pawn positions vary" + idCell + " " + me.getPawnPosition());
 
                 int cellToBuyId = me.getStrategy().handleBuyCell(me);
-                if (cellToBuyId == -1) {
-                    facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
-                            new GameCommand(GameAction.SEND_MONEY.name(),
-                                    Integer.toString(cellToBuyId)));
-                    break;
-                }
-                Cell cellToBuy = Board.getCellWithId(cellToBuyId);
                 facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
-                        new GameCommand(GameAction.SEND_MONEY.name(),
-                                Integer.toString(cellToBuy.getPrice())));
+                        new GameCommand(GameAction.BUY_CELL.name(),
+                                Integer.toString(cellToBuyId)));
                 break;
 
             case SELL_CELL:
@@ -147,18 +142,9 @@ public class GameLogic {
                 break;
             case BUY_HOUSE:
                 int cellToBuyHouseId = me.getStrategy().handleBuyHouse(me);
-
-                if (cellToBuyHouseId == -1) {
-                    facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
-                            new GameCommand(GameAction.BUY_HOUSE.name(),
-                                    Integer.toString(cellToBuyHouseId)));
-                    break;
-                }
-
-                Terrain consideredCell = (Terrain) Board.getCellWithId(cellToBuyHouseId);
                 facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
-                        new GameCommand(GameAction.SEND_MONEY.name(),
-                                Integer.toString(consideredCell.getHousePrice())));
+                        new GameCommand(GameAction.BUY_HOUSE.name(),
+                                Integer.toString(cellToBuyHouseId)));
                 break;
 
             case SELL_HOUSE:
@@ -186,6 +172,9 @@ public class GameLogic {
             case SEND_MONEY:
                 me.addMoney(Integer.parseInt(command.body()));
                 break;
+            case END_TURN:
+                me.refreshTurnsCounter();
+                break;
             default:
                 throw new NoSuchElementException("Unexpected game action: " + action);
         }
@@ -203,8 +192,9 @@ public class GameLogic {
                 monopolyGame.nextTour(currentPlayer);
                 players.add(currentPlayer);
             } else {
-                currentPlayer.declareGameOver();
+                currentPlayer.declareGameOver("loser");
             }
+            currentPlayer.refreshTurnsCounter();
         } while (players.size() > 1);
 
         return players.pollFirst();
