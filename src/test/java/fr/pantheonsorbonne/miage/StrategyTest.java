@@ -22,9 +22,30 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 
-public class PlayerTest {
+public class StrategyTest {
     private Player player;
     private Player adversary;
 
 
-    
+    @BeforeEach
+    void setUp() throws CellCannotBeBoughtException {
+        this.player = new Player("testPlayer");
+        this.adversary = new Player("testAdversary");
+        player.addMoney(20000);
+        adversary.addMoney(20000);
+    }
+
+    @Test
+    void handleBuyCellTest (){
+        Property property = (Property) Board.getCellWithId(7);
+        property.handleBuyCell(adversary);
+        System.out.println(player.getProperties());
+        assertFalse(player.getProperties().contains(property));
+
+    }
+
+    @AfterEach
+    void tearDown() {
+        Board.reset();
+    }
+}
