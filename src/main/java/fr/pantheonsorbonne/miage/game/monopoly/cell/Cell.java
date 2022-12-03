@@ -30,15 +30,19 @@ public abstract class Cell {
         return NO_PRICE;
     }
 
+    public Player getOwner() {
+        return null;
+    }
+
     public abstract void trigger(Player player);
 
-    public abstract void buyCell(Player player) throws CellCannotBeBoughtException;
+    public abstract void buyCell(Player player) throws CannotBuyException;
 
-    public abstract void sellCell(Player player) throws CellCannotBeSoldException;
+    public abstract void sellCell(Player player) throws CannotSellException;
 
-    public abstract void buyHouse(Player player) throws CellCannotBeBuiltException;
+    public abstract void buyHouse(Player player) throws CannotBuildException;
 
-    public abstract void sellHouse(Player player) throws CellCannotBeBuiltException;
+    public abstract void sellHouse(Player player) throws CannotBuildException;
 
     public abstract void reset();
 

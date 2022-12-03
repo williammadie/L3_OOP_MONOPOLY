@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.miage.game.monopoly;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.UUID;
@@ -12,13 +13,12 @@ import com.github.javafaker.Faker;
 
 import fr.pantheonsorbonne.miage.PlayerFacade;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBoughtException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 import fr.pantheonsorbonne.miage.game.monopoly.player.PlayerRankComparator;
-import fr.pantheonsorbonne.miage.game.monopoly.strategy.AlwaysBuy;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.Hybrid;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyAbovePrice;
-import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyOrangeOnly;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyColorOnly;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.Strategy;
 import fr.pantheonsorbonne.miage.model.Game;
 import fr.pantheonsorbonne.miage.model.GameCommand;
@@ -57,6 +57,10 @@ public class GameLogic {
         return new Faker().name().firstName();
     }
 
+    public static Color getRandomColor() {
+        return Color.values()[getRandomNumberBetween(0, Color.values().length - 1)];
+    }
+
     public static Strategy selectStrategy(Player player) {
         int selectedNumber;
         Strategy selectedStrategy;
@@ -78,7 +82,7 @@ public class GameLogic {
         switch (selectedNumber) {
             case 0:
                 System.out.println("AlwaysBuy Strategy selected");
-                selectedStrategy = new AlwaysBuy();
+                selectedStrategy = new Hybrid();
                 break;
             case 1:
                 System.out.println("BuyAbovePrice Strategy selected");
@@ -86,7 +90,7 @@ public class GameLogic {
                 break;
             case 2:
                 System.out.println("BuyOrangeOnly Strategy selected");
-                selectedStrategy = new BuyOrangeOnly();
+                selectedStrategy = new BuyColorOnly(Color.ORANGE);
                 break;
             default:
                 throw new UnknownError("Selected Strategy Number equals " + selectedNumber);
@@ -106,56 +110,73 @@ public class GameLogic {
 
     public static void executeGameCommand(PlayerFacade facade, Game currentGame, GameCommand command, Player me) {
         GameAction action = GameAction.valueOf(command.name());
-        System.out.println(action);
+        System.out.println("\n");
+        System.out.println(Board.getCellWithId(me.getPawnPosition()).toString());
         switch (action) {
+            case CHECK_BALANCE:
+                facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
+                        new GameCommand(GameAction.CHECK_BALANCE.name(),
+                                Integer.toString(me.getBalance())));
+                break;
 
-            case MOVE_PAWN_TO: // index
+            case MOVE_PAWN_TO:
                 me.movePawnTo(Integer.parseInt(command.body()));
                 break;
 
-            case BUY_CELL: // index
+            case BUY_CELL:
                 String idCell = command.body();
+                if (Integer.parseInt(idCell) != me.getPawnPosition())
+                    throw new IllegalStateException(
+                            "Local and distant pawn positions vary" + idCell + " " + me.getPawnPosition());
+
+                int cellToBuyId = me.getStrategy().handleBuyCell(me);
                 facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
-                        new GameCommand(GameAction.SEND_MONEY.name()));
-                GameCommand confirmCommand = facade.receiveGameCommand(currentGame);
-                if (GameAction.valueOf(confirmCommand.name()).equals(GameAction.ABORT_ACTION))
-                    break;
-                Cell currentCell = Board.getCellWithId(Integer.parseInt(idCell));
-                try {
-                    currentCell.buyCell(me);
-                } catch (CellCannotBeBoughtException e) {
-                    e.printStackTrace();
-                }
+                        new GameCommand(GameAction.BUY_CELL.name(),
+                                Integer.toString(cellToBuyId)));
                 break;
 
-            case SELL_CELL: // index
-                Cell cellToSell = me.getProperties()
-                        .get(GameLogic.getRandomNumberBetween(0, me.getProperties().size() - 1));
-                int cellToSellId = cellToSell.getCellId();
+            case SELL_CELL:
+                int cellToSellId = me.getStrategy().handleSellCell(me);
                 facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
                         new GameCommand(GameAction.SELL_CELL.name(), Integer.toString(cellToSellId)));
                 break;
-            case BUY_HOUSE: // index
-                System.out.println("in progress..");
+            case BUY_HOUSE:
+                int cellToBuyHouseId = me.getStrategy().handleBuyHouse(me);
+                facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
+                        new GameCommand(GameAction.BUY_HOUSE.name(),
+                                Integer.toString(cellToBuyHouseId)));
                 break;
 
-            case SELL_HOUSE: // index
-                System.out.println("in progress..");
+            case SELL_HOUSE:
+                int cellToSellHouseId = me.getStrategy().handleSellHouse(me);
+                facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
+                        new GameCommand(GameAction.SELL_HOUSE.name(), Integer.toString(cellToSellHouseId)));
                 break;
 
             case SEND_MONEY_TO: // cashAmount, targetedPlayerName
-                String[] params = command.body().split(",");
-                String cashAmount = params[0];
-                String targetedPlayerName = params[1];
-                facade.sendGameCommandToPlayer(currentGame, targetedPlayerName,
-                        new GameCommand("SEND_MONEY", cashAmount));
+                String cashAmount;
+                if (!command.body().contains(",")) {
+                    cashAmount = command.body();
+                    facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
+                            new GameCommand("SEND_MONEY", command.body()));
+                } else {
+                    String[] params = command.body().split(",");
+                    cashAmount = params[0];
+                    String targetedPlayerName = params[1];
+                    facade.sendGameCommandToPlayer(currentGame, targetedPlayerName,
+                            new GameCommand("SEND_MONEY", cashAmount));
+                }
+                me.removeMoney(Integer.parseInt(cashAmount));
                 break;
 
-            case SEND_MONEY: // cashAmount
+            case SEND_MONEY:
                 me.addMoney(Integer.parseInt(command.body()));
                 break;
-            default:
+            case END_TURN:
+                me.refreshTurnsCounter();
                 break;
+            default:
+                throw new NoSuchElementException("Unexpected game action: " + action);
         }
     }
 
@@ -171,8 +192,9 @@ public class GameLogic {
                 monopolyGame.nextTour(currentPlayer);
                 players.add(currentPlayer);
             } else {
-                System.out.println("Player " + currentPlayer.getName() + " went bankrupt!\n");
+                currentPlayer.declareGameOver("loser");
             }
+            currentPlayer.refreshTurnsCounter();
         } while (players.size() > 1);
 
         return players.pollFirst();

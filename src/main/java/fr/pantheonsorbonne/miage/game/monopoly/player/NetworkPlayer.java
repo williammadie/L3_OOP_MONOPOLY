@@ -1,13 +1,20 @@
 package fr.pantheonsorbonne.miage.game.monopoly.player;
 
+import java.util.NoSuchElementException;
+
 import fr.pantheonsorbonne.miage.PlayerFacade;
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBoughtException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuyException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotSellException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuildException;
 import fr.pantheonsorbonne.miage.model.Game;
 import fr.pantheonsorbonne.miage.model.GameCommand;
 
+/**
+ * This class allows Host to communicate with a distant player.
+ */
 public class NetworkPlayer extends Player {
 
     private PlayerFacade playerFacade;
@@ -23,41 +30,45 @@ public class NetworkPlayer extends Player {
     public void makeChoice(GameAction possibleAction) {
         switch (possibleAction) {
             case BUY_HOUSE:
-                playerFacade.sendGameCommandToPlayer(game, this.getName(),
-                        new GameCommand(GameAction.BUY_HOUSE.name(), Integer.toString(this.pawnPosition)));
+                this.handleBuyHouse();
                 break;
+
             case BUY_CELL:
-                playerFacade.sendGameCommandToPlayer(game, this.getName(),
-                        new GameCommand(GameAction.BUY_CELL.name(), Integer.toString(this.pawnPosition)));
-
-                GameCommand command = playerFacade.receiveGameCommand(game);
-                try {
-                    if (!command.name().equals(GameAction.SEND_MONEY.name()))
-                        break;
-
-                    if (command.body().equals(Integer.toString(this.pawnPosition))) {
-                        Cell currentCell = Board.getCellWithId(this.pawnPosition);
-                        currentCell.buyCell(this);
-                        playerFacade.sendGameCommandToPlayer(game, this.getName(),
-                                new GameCommand(GameAction.CONFIRM_ACTION.name()));
-                    }
-                } catch (CellCannotBeBoughtException e) {
-                    playerFacade.sendGameCommandToPlayer(game, this.getName(),
-                            new GameCommand(GameAction.ABORT_ACTION.name()));
-                }
-
+                this.handleBuyCell();
                 break;
+
+            case SELL_HOUSE:
+                this.handleSellHouse();
+                break;
+
+            case SELL_CELL:
+                this.handleSellCell();
+                break;
+
             default:
-                System.out.println("in progress...");
-                break;
+                throw new NoSuchElementException("Unknown case: " + possibleAction);
         }
     }
 
     @Override
-    public void addMoney(int price) {
-        super.addMoney(price);
+    public void addMoneySafe(int price) {
+        super.addMoneySafe(price);
         playerFacade.sendGameCommandToPlayer(game, this.getName(),
                 new GameCommand(GameAction.SEND_MONEY.name(), Integer.toString(price)));
+    }
+
+    @Override
+    public void removeMoneySafe(int price) {
+        super.removeMoneySafe(price);
+        StringBuilder sb = new StringBuilder();
+        sb.append(price);
+        playerFacade.sendGameCommandToPlayer(game, this.getName(),
+                new GameCommand(GameAction.SEND_MONEY_TO.name(), Integer.toString(price)));
+
+        GameCommand command = playerFacade.receiveGameCommand(game);
+
+        if (!command.name().equals(GameAction.SEND_MONEY.name()))
+            throw new UnexpectedCommandException(command.name());
     }
 
     @Override
@@ -67,4 +78,115 @@ public class NetworkPlayer extends Player {
                 new GameCommand(GameAction.MOVE_PAWN_TO.name(), Integer.toString(cellId)));
     }
 
+    @Override
+    public boolean isSynchronized() {
+        playerFacade.sendGameCommandToPlayer(game, this.getName(),
+                new GameCommand(GameAction.CHECK_BALANCE.name()));
+        GameCommand command = playerFacade.receiveGameCommand(game);
+
+        if (!command.name().equals(GameAction.CHECK_BALANCE.name()))
+            throw new UnexpectedCommandException(command.name());
+
+        int distantBalance = Integer.parseInt(command.body());
+        return distantBalance == this.getBalance();
+    }
+
+    @Override
+    public void declareGameOver(String status) {
+        super.declareGameOver(status);
+        if (status.equals("winner"))
+            playerFacade.sendGameCommandToPlayer(game, this.getName(),
+                    new GameCommand(GameAction.GAME_OVER.name(), "winner"));
+        else
+            playerFacade.sendGameCommandToPlayer(game, this.getName(),
+                    new GameCommand(GameAction.GAME_OVER.name(), "loser"));
+    }
+
+    @Override
+    public void refreshTurnsCounter() {
+        super.refreshTurnsCounter();
+        playerFacade.sendGameCommandToPlayer(game, this.getName(),
+                new GameCommand(GameAction.END_TURN.name()));
+    }
+
+    private void handleBuyHouse() {
+        playerFacade.sendGameCommandToPlayer(game, this.getName(),
+                new GameCommand(GameAction.BUY_HOUSE.name(), Integer.toString(this.pawnPosition)));
+        GameCommand command = playerFacade.receiveGameCommand(game);
+
+        if (!command.name().equals(GameAction.BUY_HOUSE.name()))
+            throw new UnexpectedCommandException(command.name());
+
+        int cellToBuyHouseId = Integer.parseInt(command.body());
+        if (cellToBuyHouseId == GameAction.ABORT_ACTION.value)
+            return;
+
+        Cell cellToBuyHouse = Board.getCellWithId(cellToBuyHouseId);
+        try {
+            cellToBuyHouse.buyHouse(this);
+        } catch (CannotBuildException e1) {
+            e1.printStackTrace();
+            throw new DesynchronizedPlayerException();
+        }
+    }
+
+    private void handleBuyCell() {
+        playerFacade.sendGameCommandToPlayer(game, this.getName(),
+                new GameCommand(GameAction.BUY_CELL.name(), Integer.toString(this.pawnPosition)));
+
+        GameCommand command = playerFacade.receiveGameCommand(game);
+        if (!command.name().equals(GameAction.BUY_CELL.name()))
+            throw new UnexpectedCommandException(command.name());
+
+        if (Integer.parseInt(command.body()) == GameAction.ABORT_ACTION.value)
+            return;
+
+        try {
+            Cell currentCell = Board.getCellWithId(this.pawnPosition);
+            currentCell.buyCell(this);
+        } catch (CannotBuyException e) {
+            e.printStackTrace();
+            throw new DesynchronizedPlayerException();
+        }
+    }
+
+    private void handleSellHouse() {
+        playerFacade.sendGameCommandToPlayer(game, this.getName(),
+                new GameCommand(GameAction.SELL_HOUSE.name(), Integer.toString(this.pawnPosition)));
+        GameCommand command = playerFacade.receiveGameCommand(game);
+
+        if (!command.name().equals(GameAction.SELL_HOUSE.name()))
+            throw new UnexpectedCommandException(command.name());
+
+        if (Integer.parseInt(command.body()) == GameAction.ABORT_ACTION.value)
+            return;
+
+        int cellToSellHouseId = Integer.parseInt(command.body());
+        Cell cellToSellHouse = Board.getCellWithId(cellToSellHouseId);
+        try {
+            cellToSellHouse.sellHouse(this);
+        } catch (CannotBuildException e) {
+            throw new DesynchronizedPlayerException();
+        }
+    }
+
+    private void handleSellCell() {
+        playerFacade.sendGameCommandToPlayer(game, this.getName(),
+                new GameCommand(GameAction.SELL_CELL.name(), Integer.toString(this.pawnPosition)));
+        GameCommand command = playerFacade.receiveGameCommand(game);
+
+        if (!command.name().equals(GameAction.SELL_CELL.name()))
+            throw new UnexpectedCommandException("Unexpected command: " + command.name());
+
+        if (Integer.parseInt(command.body()) == GameAction.ABORT_ACTION.value)
+            return;
+
+        int cellToSellCellId = Integer.parseInt(command.body());
+        Cell cellToSellCell = Board.getCellWithId(cellToSellCellId);
+        try {
+            cellToSellCell.sellCell(this);
+        } catch (CannotSellException e) {
+            throw new DesynchronizedPlayerException();
+        }
+    }
 }

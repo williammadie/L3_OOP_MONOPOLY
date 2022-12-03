@@ -8,23 +8,22 @@ public abstract class Special extends Cell {
         super(name);
     }
 
-    public void buyCell(Player player) throws CellCannotBeBoughtException {
-        throw new CellCannotBeBoughtException("Cannot buy the cell " + super.name);
+    public void buyCell(Player player) throws CannotBuyException {
+        throw new CannotBuyException("Cannot buy the cell " + super.name);
     }
 
-    public void sellCell(Player player) throws CellCannotBeSoldException {
-        throw new CellCannotBeSoldException("Cannot sell the cell " + super.name);
+    public void sellCell(Player player) throws CannotSellException {
+        throw new CannotSellException("Cannot sell the cell " + super.name);
     }
 
-    public void buyHouse(Player player) throws CellCannotBeBuiltException {
-        throw new CellCannotBeBuiltException("Cannot build on cell " + super.name);
+    public void buyHouse(Player player) throws CannotBuildException {
+        throw new CannotBuildException("Cannot build on cell " + super.name);
     }
 
-    public void sellHouse(Player player) throws CellCannotBeBuiltException {
-        throw new CellCannotBeBuiltException("Cannot sell house on cell " + super.name);
+    public void sellHouse(Player player) throws CannotBuildException {
+        throw new CannotBuildException("Cannot sell house on cell " + super.name);
     }
 
     public void reset() {
-        return;
     }
 }

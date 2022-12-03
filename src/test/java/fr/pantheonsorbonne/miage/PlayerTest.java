@@ -12,18 +12,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBoughtException;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBuiltException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuyException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuildException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-public class PlayerTest {
+class PlayerTest {
     private Player player;
     private Player adversary;
 
     @BeforeEach
-    void setUp() throws CellCannotBeBoughtException {
+    void setUp() throws CannotBuyException {
         this.player = new Player("testPlayer");
         this.adversary = new Player("testAdversary");
         player.addMoney(20000);
@@ -81,7 +81,7 @@ public class PlayerTest {
     }
 
     @Test
-    void testCountPlayerHouses() throws CellCannotBeBuiltException {
+    void testCountPlayerHouses() throws CannotBuildException {
         Property p1 = (Property) Board.getCellWithId(6);
         Property p2 = (Property) Board.getCellWithId(8);
         Property p3 = (Property) Board.getCellWithId(9);
@@ -121,7 +121,7 @@ public class PlayerTest {
     @Test
     void testgetStartingBonus() {
         int previousBalanceAmount = player.getBalance();
-        player.getStartingBonus();
+        player.getStartingBonus(false);
         assertEquals(previousBalanceAmount + 200, player.getBalance());
     }
 

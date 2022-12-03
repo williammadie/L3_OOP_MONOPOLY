@@ -5,19 +5,20 @@ import java.util.NoSuchElementException;
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBoughtException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuyException;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBuiltException;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeSoldException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuildException;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotSellException;
 
-public interface Strategy {
+public abstract class Strategy {
 
-    default void makeChoice(GameAction possibleAction, Player player) {
+    public void makeChoice(GameAction possibleAction, Player player) {
         switch (possibleAction) {
             case BUY_CELL:
                 handleBuyCell(player);
                 break;
+
             case SELL_CELL:
                 handleSellCell(player);
                 break;
@@ -35,58 +36,62 @@ public interface Strategy {
         }
     }
 
-    default void handleBuyCell(Player player) {
+    public int handleBuyCell(Player player) {
         if (!doBuyCell(player))
-            return;
+            return -1;
 
         Cell currentCell = Board.getCellWithId(player.getPawnPosition());
         try {
             currentCell.buyCell(player);
-        } catch (CellCannotBeBoughtException e) {
+            return currentCell.getCellId();
+        } catch (CannotBuyException e) {
             e.printStackTrace();
-            System.exit(2);
+            throw new CriticalMalfunctionException(
+                    "Cannot buy cell n°" + player.getPawnPosition() + " for an unknown reason");
         }
     }
 
-    default void handleSellCell(Player player) {
+    public int handleSellCell(Player player) {
         if (player.getProperties().isEmpty())
-            return;
+            return GameAction.ABORT_ACTION.value;
 
         try {
-            player.getProperties().get(0).sellCell(player);
-        } catch (CellCannotBeSoldException e1) {
+            Cell cellToSell = player.getProperties().get(0);
+            cellToSell.sellCell(player);
+            return cellToSell.getCellId();
+        } catch (CannotSellException e1) {
             e1.printStackTrace();
-            System.exit(2);
+            throw new CriticalMalfunctionException(
+                    "Cannot sell cell n°" + player.getPawnPosition() + " for an unknown reason");
         }
     }
 
-    default void handleBuyHouse(Player player) {
-        if (!doBuyHouse(player))
-            return;
-
+    public int handleBuyHouse(Player player) {
         for (Property property : player.getProperties()) {
             if (tryToBuyHouse(player, property))
-                return;
+                return property.getCellId();
         }
+        return GameAction.ABORT_ACTION.value;
     }
 
-    default void handleSellHouse(Player player) {
+    public int handleSellHouse(Player player) {
         for (Property property : player.getProperties()) {
             if (tryToSellHouse(player, property))
-                return;
+                return property.getCellId();
         }
+        return GameAction.ABORT_ACTION.value;
     }
 
-    default boolean tryToBuyHouse(Player player, Property property) {
+    private boolean tryToBuyHouse(Player player, Property property) {
         try {
             property.buyHouse(player);
             return true;
-        } catch (CellCannotBeBuiltException e) {
+        } catch (CannotBuildException e) {
             return false;
         }
     }
 
-    default boolean tryToSellHouse(Player player, Property property) {
+    private boolean tryToSellHouse(Player player, Property property) {
         if (player.getProperties().isEmpty() || property.getHouseNumber() == 0) {
             return false;
         }
@@ -94,13 +99,16 @@ public interface Strategy {
         try {
             property.sellHouse(player);
             return true;
-        } catch (CellCannotBeBuiltException e) {
+        } catch (CannotBuildException e) {
             return false;
         }
     }
 
-    boolean doBuyCell(Player player);
+    public abstract boolean doBuyCell(Player player);
 
-    boolean doBuyHouse(Player player);
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
 
 }

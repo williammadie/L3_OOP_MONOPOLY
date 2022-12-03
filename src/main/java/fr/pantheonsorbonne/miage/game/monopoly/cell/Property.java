@@ -17,6 +17,7 @@ public abstract class Property extends Cell {
         this.owner = null;
     }
 
+    @Override
     public Player getOwner() {
         return this.owner;
     }
@@ -63,12 +64,12 @@ public abstract class Property extends Cell {
     }
 
     @Override
-    public void buyCell(Player player) throws CellCannotBeBoughtException {
+    public void buyCell(Player player) throws CannotBuyException {
         if (player.getBalance() < this.price)
-            throw new CellCannotBeBoughtException("Player doesn't have required amount for buying.");
+            throw new CannotBuyException("Player doesn't have required amount for buying.");
 
         if (!this.isVacant())
-            throw new CellCannotBeBoughtException("Cell is already occupied.");
+            throw new CannotBuyException("Cell is already occupied.");
 
         player.removeMoney(price);
         System.out.println(player.getName() + " buys cell " + super.name + " for " + this.price + "Eur");
@@ -76,25 +77,26 @@ public abstract class Property extends Cell {
     }
 
     @Override
-    public void sellCell(Player player) throws CellCannotBeSoldException {
+    public void sellCell(Player player) throws CannotSellException {
         if (!this.owner.equals(player))
-            throw new CellCannotBeSoldException(
+            throw new CannotSellException(
                     "Cell " + super.name + " does not belong to player " + player.getName());
 
         double sellingPrice = this.price * Property.SELLING_PRICE_COEFFICIENT;
+        System.out.println("Sell Cell");
         player.addMoney((int) sellingPrice);
         System.out.println(player.getName() + " sells " + this.name + " for " + sellingPrice + "Eur");
         player.removeProperty(this);
     }
 
     @Override
-    public void buyHouse(Player player) throws CellCannotBeBuiltException {
-        throw new CellCannotBeBuiltException("Cannot build on cell " + super.name);
+    public void buyHouse(Player player) throws CannotBuildException {
+        throw new CannotBuildException("Cannot build on cell " + super.name);
     }
 
     @Override
-    public void sellHouse(Player player) throws CellCannotBeBuiltException {
-        throw new CellCannotBeBuiltException("Cannot sell house on cell " + super.name);
+    public void sellHouse(Player player) throws CannotBuildException {
+        throw new CannotBuildException("Cannot sell house on cell " + super.name);
     }
 
     @Override
