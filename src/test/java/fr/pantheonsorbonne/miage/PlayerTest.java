@@ -2,7 +2,6 @@ package fr.pantheonsorbonne.miage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
@@ -12,15 +11,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import fr.pantheonsorbonne.miage.game.monopoly.MonopolyGame;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBoughtException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CellCannotBeBuiltException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
-
 
 public class PlayerTest {
     private Player player;
@@ -52,61 +48,74 @@ public class PlayerTest {
     void testAddProperty() {
         Property newProperty = (Property) Board.getCellWithId(39);
         player.addProperty(newProperty);
-        System.out.println(player.getProperties());
         assertTrue(player.getProperties().contains(newProperty));
     }
 
+    @Test
+    void testRemoveProperty() {
+        Property otherProperty = (Property) Board.getCellWithId(39);
+        player.addProperty(otherProperty);
+        player.removeProperty(otherProperty);
+        assertFalse(player.getProperties().contains(otherProperty));
+    }
 
     @Test
-    void testgetPropertiesColor() {
+    void testGetPropertiesColor() {
         Property newProperty = (Property) Board.getCellWithId(39);
         Property newProperty2 = (Property) Board.getCellWithId(37);
         player.addProperty(newProperty);
         player.addProperty(newProperty2);
-        
+
         assertTrue(player.getProperties(Color.ORANGE).isEmpty());
-        List<Property> expectedProperties = Arrays.asList(newProperty,newProperty2);
+        List<Property> expectedProperties = Arrays.asList(newProperty, newProperty2);
         List<Property> actualProperties = player.getProperties(Color.DEEP_BLUE).stream().toList();
         assertEquals(expectedProperties.size(), actualProperties.size());
         assertTrue(expectedProperties.containsAll(actualProperties));
-    }   
+    }
 
     @Test
-    void testRemoveProperty(){
-        Property otherProperty = (Property) Board.getCellWithId(39);
-        player.removeProperty(otherProperty);
-        System.out.println(player.getProperties());
-        assertFalse(player.getProperties().contains(otherProperty));
-
-    }
-
-    @Test 
-    void testIsBankRupt(){
+    void testIsBankRupt() {
         player.removeMoney(20000);
-        player.getProperties().isEmpty();
-        assertTrue(player.isBankrupt());      
+        player.getProperties().clear();
+        assertTrue(player.isBankrupt());
     }
 
-    @Test 
-    void testCountPlayerHouses(){
-
-        
+    @Test
+    void testCountPlayerHouses() throws CellCannotBeBuiltException {
+        Property p1 = (Property) Board.getCellWithId(6);
+        Property p2 = (Property) Board.getCellWithId(8);
+        Property p3 = (Property) Board.getCellWithId(9);
+        player.addProperty(p1);
+        player.addProperty(p2);
+        player.addProperty(p3);
+        assertEquals(0, player.countPlayerHouses());
+        p1.buyHouse(player);
+        p2.buyHouse(player);
+        p3.buyHouse(player);
+        assertEquals(3, player.countPlayerHouses());
     }
 
-    @Test 
-    void testPay(){
+    @Test
+    void testPay() {
         int previousBalanceAmount = player.getBalance();
-        int previousBalanceAmountReceiver= adversary.getBalance();
+        int previousBalanceAmountReceiver = adversary.getBalance();
         player.pay(2000, adversary);
         assertEquals(previousBalanceAmount - 2000, player.getBalance());
         assertEquals(previousBalanceAmountReceiver + 2000, adversary.getBalance());
     }
 
-    @Test 
-    void testMovePawnOf(){
-        int previousPosition= player.getPawnPosition();
+    @Test
+    void testMovePawnOf() {
+        int previousPosition = player.getPawnPosition();
         player.movePawnOf(2);
-        assertEquals(previousPosition+2, player.getPawnPosition());
+        assertEquals(previousPosition + 2, player.getPawnPosition());
+    }
+
+    @Test
+    void testMovePawnTo() {
+        player.movePawnTo(6);
+        assertEquals(6, player.getPawnPosition());
+
     }
 
     @Test

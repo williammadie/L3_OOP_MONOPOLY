@@ -21,26 +21,24 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-
-public class StrategyTest {
-    private Player player;
+class StrategyTest {
+    private Player p1;
     private Player adversary;
-
 
     @BeforeEach
     void setUp() throws CellCannotBeBoughtException {
-        this.player = new Player("testPlayer");
+        this.p1 = new Player("testPlayer");
         this.adversary = new Player("testAdversary");
-        player.addMoney(20000);
+        p1.addMoney(20000);
         adversary.addMoney(20000);
     }
 
     @Test
-    void handleBuyCellTest (){
+    void handleBuyCellTest() {
         Property property = (Property) Board.getCellWithId(7);
         property.handleBuyCell(adversary);
-        System.out.println(player.getProperties());
-        assertFalse(player.getProperties().contains(property));
+        System.out.println(p1.getProperties());
+        assertFalse(p1.getProperties().contains(property));
 
     }
 
