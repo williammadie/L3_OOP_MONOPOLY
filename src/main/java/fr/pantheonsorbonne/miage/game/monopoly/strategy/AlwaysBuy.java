@@ -9,5 +9,4 @@ public class AlwaysBuy extends CommonActions {
         return true;
     }
 
-
 }

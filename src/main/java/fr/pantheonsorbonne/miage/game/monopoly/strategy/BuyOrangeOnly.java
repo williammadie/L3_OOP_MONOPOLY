@@ -11,7 +11,6 @@ public class BuyOrangeOnly extends CommonActions {
         Cell currentCell = Board.getCellWithId(player.getPawnPosition());
 
         return currentCell.getColor().equals(Color.ORANGE);
-
     }
 
 }

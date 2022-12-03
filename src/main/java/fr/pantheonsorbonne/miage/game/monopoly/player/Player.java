@@ -117,7 +117,6 @@ public class Player {
         return this.properties.stream().map(Property::getHouseNumber).mapToInt(Integer::intValue).sum();
     }
 
-
     public void pay(int moneyAmount, Player moneyReceiver) {
         this.removeMoney(moneyAmount);
         moneyReceiver.addMoney(moneyAmount);
@@ -127,9 +126,10 @@ public class Player {
         this.strategy.makeChoice(possibleAction, this);
     }
 
-    public void movePawnOf(int numberOfCells) {
-        int nextPawnPosition = (this.pawnPosition + numberOfCells) % Board.BOARD_LENGTH;
-        movePawnTo(nextPawnPosition);
+    public void getStartingBonus() {
+        if (this.isJailed)
+            return;
+        this.addMoney(StartingPoint.MONEY_GIFT_AMOUNT);
     }
 
     public void movePawnTo(int cellId) {
@@ -140,10 +140,9 @@ public class Player {
         this.pawnPosition = cellId;
     }
 
-    public void getStartingBonus() {
-        if (this.isJailed)
-            return;
-        this.addMoney(StartingPoint.MONEY_GIFT_AMOUNT);
+    public void movePawnOf(int numberOfCells) {
+        int nextPawnPosition = (this.pawnPosition + numberOfCells) % Board.BOARD_LENGTH;
+        movePawnTo(nextPawnPosition);
     }
 
     public String toString() {
