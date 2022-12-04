@@ -2,6 +2,10 @@ package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
+/**
+ * This class represents a single unit of the Monopoly board. There are 40 of
+ * these units. Each one has its own values and specifications.
+ */
 public abstract class Cell {
     public static final int MAX_HOUSE_NUMBER = 4;
     private static final int NO_PRICE = 0;
@@ -34,6 +38,11 @@ public abstract class Cell {
         return null;
     }
 
+    /**
+     * This is triggered each time a player lands on the cell.
+     * 
+     * @param player the player affected by the cell effects
+     */
     public abstract void trigger(Player player);
 
     public abstract void buyCell(Player player) throws CannotBuyException;
@@ -44,6 +53,9 @@ public abstract class Cell {
 
     public abstract void sellHouse(Player player) throws CannotBuildException;
 
+    /**
+     * This resets cell attributes to their default value.
+     */
     public abstract void reset();
 
     @Override

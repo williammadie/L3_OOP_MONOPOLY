@@ -5,12 +5,16 @@ import java.util.NoSuchElementException;
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuyException;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuildException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotSellException;
 
+/**
+ * This class allows the player to play with different strategies. All strategies must extends this basic class.
+ */
 public abstract class Strategy {
 
     public void makeChoice(GameAction possibleAction, Player player) {
@@ -36,7 +40,7 @@ public abstract class Strategy {
         }
     }
 
-    public int handleBuyCell(Player player) {
+    public final int handleBuyCell(Player player) {
         if (!doBuyCell(player))
             return -1;
 
@@ -51,7 +55,7 @@ public abstract class Strategy {
         }
     }
 
-    public int handleSellCell(Player player) {
+    public final int handleSellCell(Player player) {
         if (player.getProperties().isEmpty())
             return GameAction.ABORT_ACTION.value;
 
@@ -66,7 +70,7 @@ public abstract class Strategy {
         }
     }
 
-    public int handleBuyHouse(Player player) {
+    public final int handleBuyHouse(Player player) {
         for (Property property : player.getProperties()) {
             if (tryToBuyHouse(player, property))
                 return property.getCellId();
@@ -74,7 +78,7 @@ public abstract class Strategy {
         return GameAction.ABORT_ACTION.value;
     }
 
-    public int handleSellHouse(Player player) {
+    public final int handleSellHouse(Player player) {
         for (Property property : player.getProperties()) {
             if (tryToSellHouse(player, property))
                 return property.getCellId();
@@ -104,7 +108,33 @@ public abstract class Strategy {
         }
     }
 
-    public abstract boolean doBuyCell(Player player);
+    public boolean doBuyCell(Player player) {
+        Cell currentCell = Board.getCellWithId(player.getPawnPosition());
+        return this.calculateBuyingWish(player, currentCell.getColor()) > 40;
+    }
+
+    /**
+     * This function calculates an indicator which represents the will of player to
+     * buy a cell. It returns an int between 0 (VERY UNLIKELY TO BUY) and 100 (VERY
+     * LIKELY TO BUY) included. By default, it will return 100 for stations and
+     * public services. For properties, the value will depend on the number of
+     * adversaries already present on the group of colors.
+     * 
+     * @param player
+     * @param color
+     * @return a mark between 0 and 100 (both included) which represent the desire to buy
+     */
+    public int calculateBuyingWish(Player player, Color color) {
+
+        if (color.equals(Color.COLORLESS))
+            return 100;
+
+        if (player.getProperties().size() < 3) {
+            return Board.getNumberOfAdversaryOwnersForColor(player, color) > 0 ? 0 : 100;
+        }
+
+        return (player.getOwnedPropertyNumberWithColor(color) + 1 / Board.getExistingCellNumberWithColor(color)) * 100;
+    }
 
     @Override
     public String toString() {

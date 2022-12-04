@@ -10,6 +10,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 
 public class BuyColorOnly extends Strategy {
+    public static final String IDENTIFIER = "BuyColorOnly";
     private List<Color> colors;
 
     public BuyColorOnly(Color color) {
@@ -27,14 +28,14 @@ public class BuyColorOnly extends Strategy {
     @Override
     public boolean doBuyCell(Player player) {
         Cell currentCell = Board.getCellWithId(player.getPawnPosition());
-
+        System.out.println(this.colors.toString());
         if (currentCell.getColor().equals(Color.COLORLESS))
             return true;
 
         if (!colors.contains(currentCell.getColor()))
             return false;
 
-        return player.calculateBuyingWish(player, currentCell.getColor()) > 40;
+        return super.doBuyCell(player);
     }
 
 }

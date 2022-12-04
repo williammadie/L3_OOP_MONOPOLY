@@ -4,8 +4,13 @@ import java.util.NoSuchElementException;
 
 import fr.pantheonsorbonne.miage.PlayerFacade;
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
+import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.AlwaysBuy;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyAbovePrice;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyColorOnly;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.Hybrid;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuyException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotSellException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuildException;
@@ -30,19 +35,19 @@ public class NetworkPlayer extends Player {
     public void makeChoice(GameAction possibleAction) {
         switch (possibleAction) {
             case BUY_HOUSE:
-                this.handleBuyHouse();
+                this.triggerBuyHouse();
                 break;
 
             case BUY_CELL:
-                this.handleBuyCell();
+                this.triggerBuyCell();
                 break;
 
             case SELL_HOUSE:
-                this.handleSellHouse();
+                this.triggerSellHouse();
                 break;
 
             case SELL_CELL:
-                this.handleSellCell();
+                this.triggerSellCell();
                 break;
 
             default:
@@ -109,7 +114,33 @@ public class NetworkPlayer extends Player {
                 new GameCommand(GameAction.END_TURN.name()));
     }
 
-    private void handleBuyHouse() {
+    @Override
+    public void createStrategy() {
+        playerFacade.sendGameCommandToPlayer(game, this.getName(),
+                new GameCommand(GameAction.GET_STRATEGY.name()));
+        GameCommand command = playerFacade.receiveGameCommand(game);
+        String strategyName = command.body();
+        int selectedNumber;
+        switch (strategyName) {
+            case AlwaysBuy.IDENTIFIER:
+                selectedNumber = 0;
+                break;
+            case BuyAbovePrice.IDENTIFIER:
+                selectedNumber = 1;
+                break;
+            case BuyColorOnly.IDENTIFIER:
+                selectedNumber = 2;
+                break;
+            case Hybrid.IDENTIFIER:
+                selectedNumber = 3;
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected case: " + strategyName);
+        }
+        super.strategy = GameLogic.selectStrategy(selectedNumber);
+    }
+
+    private void triggerBuyHouse() {
         playerFacade.sendGameCommandToPlayer(game, this.getName(),
                 new GameCommand(GameAction.BUY_HOUSE.name(), Integer.toString(this.pawnPosition)));
         GameCommand command = playerFacade.receiveGameCommand(game);
@@ -130,7 +161,7 @@ public class NetworkPlayer extends Player {
         }
     }
 
-    private void handleBuyCell() {
+    private void triggerBuyCell() {
         playerFacade.sendGameCommandToPlayer(game, this.getName(),
                 new GameCommand(GameAction.BUY_CELL.name(), Integer.toString(this.pawnPosition)));
 
@@ -150,7 +181,7 @@ public class NetworkPlayer extends Player {
         }
     }
 
-    private void handleSellHouse() {
+    private void triggerSellHouse() {
         playerFacade.sendGameCommandToPlayer(game, this.getName(),
                 new GameCommand(GameAction.SELL_HOUSE.name(), Integer.toString(this.pawnPosition)));
         GameCommand command = playerFacade.receiveGameCommand(game);
@@ -170,7 +201,7 @@ public class NetworkPlayer extends Player {
         }
     }
 
-    private void handleSellCell() {
+    private void triggerSellCell() {
         playerFacade.sendGameCommandToPlayer(game, this.getName(),
                 new GameCommand(GameAction.SELL_CELL.name(), Integer.toString(this.pawnPosition)));
         GameCommand command = playerFacade.receiveGameCommand(game);

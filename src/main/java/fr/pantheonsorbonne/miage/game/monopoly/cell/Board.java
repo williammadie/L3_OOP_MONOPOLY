@@ -92,6 +92,13 @@ public class Board {
 		};
 	}
 
+	/**
+	 * This returns the number of existing cell for each color. For instance, giving
+	 * it BROWN will returns 2.
+	 * 
+	 * @param color
+	 * @return the number of cells with the same color
+	 */
 	public static int getExistingCellNumberWithColor(Color color) {
 		switch (color) {
 			case BROWN:
@@ -104,12 +111,24 @@ public class Board {
 		}
 	}
 
+	/**
+	 * This returns the number of adversaries who already own a cell of the given
+	 * color. It is useful when considering a terrain purchase.
+	 * 
+	 * @param player
+	 * @param color
+	 * @return the number of adversaries who own terrains belonging to the group of
+	 *         color
+	 */
 	public static int getNumberOfAdversaryOwnersForColor(Player player, Color color) {
 		return (int) Arrays.stream(gameBoard)
 				.filter(cell -> cell.getColor() == color && cell.getOwner() != null)
 				.filter(cell -> !cell.getOwner().equals(player)).count();
 	}
 
+	/**
+	 * This restores the default values for each cell of the Monopoly board.
+	 */
 	public static void reset() {
 		Arrays.stream(gameBoard).forEach(Cell::reset);
 	}

@@ -61,24 +61,33 @@ public class GameLogic {
         return Color.values()[getRandomNumberBetween(0, Color.values().length - 1)];
     }
 
-    public static Strategy selectStrategy(Player player) {
+    public static Strategy inputStrategy(Player player) {
         int selectedNumber;
-        Strategy selectedStrategy;
         for (;;) {
             System.out.println("Please select a strategy number for player " + player.getName());
             System.out.println("0.__________________________________AlwaysBuy");
             System.out.println("1.__________________________________BuyAbovePrice");
-            System.out.println("2.__________________________________BuyOrangeOnly");
+            System.out.println("2.__________________________________BuyOrangeRedOnly");
+            System.out.println("3.__________________________________Hybrid");
 
             try (Scanner sc = new Scanner(System.in)) {
                 selectedNumber = sc.nextInt();
             }
 
-            if (0 <= selectedNumber && selectedNumber <= 2)
+            if (0 <= selectedNumber && selectedNumber <= 3)
                 break;
             System.out.println("Incorrect output! Please try again:");
         }
+        return selectStrategy(selectedNumber);
+    }
 
+    public static Strategy getRandomStrategy() {
+        int choice = getRandomNumberBetween(0, 3);
+        return selectStrategy(choice);
+    }
+
+    public static Strategy selectStrategy(int selectedNumber) {
+        Strategy selectedStrategy;
         switch (selectedNumber) {
             case 0:
                 System.out.println("AlwaysBuy Strategy selected");
@@ -89,8 +98,12 @@ public class GameLogic {
                 selectedStrategy = new BuyAbovePrice();
                 break;
             case 2:
-                System.out.println("BuyOrangeOnly Strategy selected");
-                selectedStrategy = new BuyColorOnly(Color.ORANGE);
+                System.out.println("BuyColorOnly Strategy selected");
+                selectedStrategy = new BuyColorOnly(getRandomColor(), getRandomColor());
+                break;
+            case 3:
+                System.out.println("Hybrid strategy selected");
+                selectedStrategy = new Hybrid();
                 break;
             default:
                 throw new UnknownError("Selected Strategy Number equals " + selectedNumber);
@@ -108,6 +121,17 @@ public class GameLogic {
             throw new IllegalArgumentException("Status can only be winner or loser");
     }
 
+    /**
+     * This handles Guest network commands. Each and every command received by the
+     * Guest class will be processed by this function.
+     * 
+     * @param facade      the playerFacade which allows to send game commands via a
+     *                    network
+     * @param currentGame the network game object which stores current game
+     *                    information for network messaging
+     * @param command     the command to process
+     * @param me          the player on which the command will be processed
+     */
     public static void executeGameCommand(PlayerFacade facade, Game currentGame, GameCommand command, Player me) {
         GameAction action = GameAction.valueOf(command.name());
         System.out.println("\n");
@@ -117,6 +141,12 @@ public class GameLogic {
                 facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
                         new GameCommand(GameAction.CHECK_BALANCE.name(),
                                 Integer.toString(me.getBalance())));
+                break;
+
+            case GET_STRATEGY:
+                facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
+                        new GameCommand(GameAction.GET_STRATEGY.name(),
+                                me.getStrategy().getClass().getSimpleName()));
                 break;
 
             case MOVE_PAWN_TO:
@@ -180,9 +210,22 @@ public class GameLogic {
         }
     }
 
+    /**
+     * This handles both local and network games. It takes all registered players
+     * and make them play until all of them except one go bankrupt.
+     * 
+     * @param playersInSession
+     * @return the winner of the game
+     */
     public static Player playTheGame(List<Player> playersInSession) {
         MonopolyGame monopolyGame = new MonopolyGame(playersInSession);
         Deque<Player> players = GameLogic.determinePlayersOrder(playersInSession);
+
+        // Strategy Assignement
+        for (Player player : players) {
+            if (player.getStrategy() == null)
+                player.createStrategy();
+        }
 
         // Gameloop
         do {

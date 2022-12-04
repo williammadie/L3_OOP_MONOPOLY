@@ -4,10 +4,7 @@ import fr.pantheonsorbonne.miage.Facade;
 import fr.pantheonsorbonne.miage.PlayerFacade;
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
-import fr.pantheonsorbonne.miage.game.monopoly.strategy.Hybrid;
-import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyColorOnly;
 import fr.pantheonsorbonne.miage.model.Game;
 import fr.pantheonsorbonne.miage.model.GameCommand;
 
@@ -20,9 +17,8 @@ public class MonopolyGuest {
         facade.createNewPlayer(playerName);
         System.out.println("I am: " + playerName);
         // wait until we are able to join a new game
-        Game currentGame = facade.autoJoinGame("monopoly-room-1");
-        Player me = new Player(playerName, new Hybrid());
-        //Player me = new Player(playerName, new BuyColorOnly(GameLogic.getRandomColor()));
+        Game currentGame = facade.autoJoinGame("monopoly-room-2");
+        Player me = new Player(playerName, GameLogic.getRandomStrategy());
 
         // Decision loop
         for (;;) {

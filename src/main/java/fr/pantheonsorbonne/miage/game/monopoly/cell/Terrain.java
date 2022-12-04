@@ -22,6 +22,12 @@ public class Terrain extends Property {
         this.houseNumber++;
     }
 
+    /**
+     * Depending on their location on the board, house prices will vary. This
+     * returns the correct price for houses taking location into account.
+     * 
+     * @return
+     */
     public int getHousePrice() {
         switch (this.color) {
             case BROWN:
@@ -123,7 +129,6 @@ public class Terrain extends Property {
             throw new CannotBuildException("Cell " + super.name + " is unsoldable");
 
         double sellingPrice = getHousePrice() * Property.SELLING_PRICE_COEFFICIENT;
-        System.out.println("Sell House");
         player.addMoney((int) sellingPrice);
         System.out.println(player.getName() + " sells a house at cell " + super.name + " for " + sellingPrice + "Eur");
         this.houseNumber--;
