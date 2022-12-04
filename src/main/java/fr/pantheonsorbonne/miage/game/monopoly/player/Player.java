@@ -23,6 +23,7 @@ public class Player {
     private int turnsPlayed;
     private int balance;
     private boolean isJailed;
+    protected final StringBuilder infoLogger;
 
     public Player(String name) {
         this.name = name;
@@ -32,6 +33,7 @@ public class Player {
         this.turnsPlayed = 0;
         this.balance = 0;
         this.isJailed = false;
+        this.infoLogger = new StringBuilder(); 
         this.strategy = new Hybrid();
     }
 
@@ -157,7 +159,7 @@ public class Player {
         if (cellId < this.pawnPosition && cellId != 0)
             getStartingBonus(false);
 
-        System.out.println(this.getName() + " moves to cell n°" + cellId);
+        this.infoLogger.append(this.getName() + " moves to cell n°" + cellId+ "\n");
         this.pawnPosition = cellId;
     }
 
@@ -165,7 +167,7 @@ public class Player {
         if (this.isJailed || this.turnsPlayed > 50)
             return;
         
-        System.out.println("New turn! " + this.getName() + " receives " + StartingPoint.MONEY_GIFT_AMOUNT + "Eur (" + this.turnsPlayed + ")");
+        this.infoLogger.append("New turn! " + this.getName() + " receives " + StartingPoint.MONEY_GIFT_AMOUNT + "Eur (" + this.turnsPlayed + ")\n");
         if (isSafe)
             this.addMoneySafe(StartingPoint.MONEY_GIFT_AMOUNT);
         else
@@ -192,7 +194,17 @@ public class Player {
         if (status.equals("winner"))
             System.out.println(this.name + " wins the game!");
         else
-            System.out.println(this.name + " went bankrupt!\n");
+            System.out.println(this.name + " went bankrupt!");
+    }
+
+
+    public StringBuilder getInfoLogger(){
+        return this.infoLogger;
+    }
+
+    public void printPlayerActions(){
+        System.out.print(this.infoLogger.toString());
+        infoLogger.setLength(0);
     }
 
     public String toString() {

@@ -11,7 +11,8 @@ public enum GameAction {
     SEND_MONEY(6),
     CHECK_BALANCE(7),
     END_TURN(8),
-    GAME_OVER(9);
+    SHOW_INFO(9),
+    GAME_OVER(10);
 
     public final int value;
 

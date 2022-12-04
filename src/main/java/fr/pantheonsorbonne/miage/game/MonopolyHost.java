@@ -10,12 +10,11 @@ import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.player.NetworkPlayer;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
-import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyAbovePrice;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyColorOnly;
 import fr.pantheonsorbonne.miage.model.Game;
 
 public class MonopolyHost {
-    private static final int NB_MAX_PLAYERS = 4;
+    private static final int NB_MAX_PLAYERS = 3;
     public static void main(String[] args) {
         PlayerFacade playerFacade = Facade.getFacade();
         HostFacade hostFacade = Facade.getFacade();
@@ -26,13 +25,10 @@ public class MonopolyHost {
         playerFacade.createNewPlayer(host.getName());        
         playersInSession.add(host);
 
-        // Launch a new game until the programs is stopped
-        for (;;) {
-            Game game = hostFacade.createNewGame("monopoly-room-1");
-            hostFacade.waitForExtraPlayerCount(NB_MAX_PLAYERS);
-            playersInSession.addAll(game.getPlayers().stream().map(playerName -> new NetworkPlayer(playerName, playerFacade, game)).toList());
-            Player winner = GameLogic.playTheGame(playersInSession);
-            winner.declareGameOver("winner");
-        }
+        Game game = hostFacade.createNewGame("monopoly-room-1");
+        hostFacade.waitForExtraPlayerCount(NB_MAX_PLAYERS);
+        playersInSession.addAll(game.getPlayers().stream().map(playerName -> new NetworkPlayer(playerName, playerFacade, game)).toList());
+        Player winner = GameLogic.playTheGame(playersInSession,game, playerFacade);
+        winner.declareGameOver("winner");
     }
 }

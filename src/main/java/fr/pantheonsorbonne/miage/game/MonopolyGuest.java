@@ -22,20 +22,19 @@ public class MonopolyGuest {
         // wait until we are able to join a new game
         Game currentGame = facade.autoJoinGame("monopoly-room-1");
         Player me = new Player(playerName, new Hybrid());
-        //Player me = new Player(playerName, new BuyColorOnly(GameLogic.getRandomColor()));
 
         // Decision loop
         for (;;) {
-            System.out.println(me.toString());
             GameCommand command = facade.receiveGameCommand(currentGame);
-            System.out.println(command.name());
             if (!command.name().equals(GameAction.GAME_OVER.name())) {
                 GameLogic.executeGameCommand(facade, currentGame, command, me);
             } else {
                 GameLogic.handleGameOver(command.body());
-                System.exit(0);
+                break;
             }
         }
+        System.exit(0);
+    
     }
 
 }

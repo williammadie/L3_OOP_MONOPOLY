@@ -110,8 +110,6 @@ public class GameLogic {
 
     public static void executeGameCommand(PlayerFacade facade, Game currentGame, GameCommand command, Player me) {
         GameAction action = GameAction.valueOf(command.name());
-        System.out.println("\n");
-        System.out.println(Board.getCellWithId(me.getPawnPosition()).toString());
         switch (action) {
             case CHECK_BALANCE:
                 facade.sendGameCommandToPlayer(currentGame, currentGame.getHostName(),
@@ -175,12 +173,16 @@ public class GameLogic {
             case END_TURN:
                 me.refreshTurnsCounter();
                 break;
+            case SHOW_INFO:
+                System.out.println(command.body());
+                break;
             default:
                 throw new NoSuchElementException("Unexpected game action: " + action);
+            
         }
     }
 
-    public static Player playTheGame(List<Player> playersInSession) {
+    public static Player playTheGame(List<Player> playersInSession, Game currentGame, PlayerFacade playerFacade) {
         MonopolyGame monopolyGame = new MonopolyGame(playersInSession);
         Deque<Player> players = GameLogic.determinePlayersOrder(playersInSession);
 
@@ -195,6 +197,10 @@ public class GameLogic {
                 currentPlayer.declareGameOver("loser");
             }
             currentPlayer.refreshTurnsCounter();
+            if(currentGame != null && currentPlayer.getName().equals(currentGame.getHostName())){
+                playerFacade.sendGameCommandToAll(currentGame,new GameCommand(GameAction.SHOW_INFO.name(), currentPlayer.getInfoLogger().toString()));
+            }
+            currentPlayer.printPlayerActions();
         } while (players.size() > 1);
 
         return players.pollFirst();

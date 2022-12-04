@@ -109,6 +109,12 @@ public class NetworkPlayer extends Player {
                 new GameCommand(GameAction.END_TURN.name()));
     }
 
+    @Override 
+    public void printPlayerActions(){
+        playerFacade.sendGameCommandToAll(game, new GameCommand(GameAction.SHOW_INFO.name(),this.infoLogger.toString()));
+        super.printPlayerActions();
+    }
+
     private void handleBuyHouse() {
         playerFacade.sendGameCommandToPlayer(game, this.getName(),
                 new GameCommand(GameAction.BUY_HOUSE.name(), Integer.toString(this.pawnPosition)));
@@ -189,4 +195,5 @@ public class NetworkPlayer extends Player {
             throw new DesynchronizedPlayerException();
         }
     }
+
 }

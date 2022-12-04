@@ -54,7 +54,7 @@ class GameLogicTest {
         Player p3 = new Player(GameLogic.generateUniquePlayerName());
         Player p4 = new Player(GameLogic.generateUniquePlayerName());
         List<Player> players = Arrays.asList(new Player[] { p1, p2, p3, p4 });
-        Player winner = GameLogic.playTheGame(players);
+        Player winner = GameLogic.playTheGame(players,null,null);
         assertTrue(players.contains(winner));
     }
 }

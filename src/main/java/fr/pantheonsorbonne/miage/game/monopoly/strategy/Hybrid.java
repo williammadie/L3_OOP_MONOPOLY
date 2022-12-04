@@ -9,7 +9,6 @@ public class Hybrid extends Strategy {
     @Override
     public boolean doBuyCell(Player player) {
         Cell currentCell = Board.getCellWithId(player.getPawnPosition());
-        System.out.println(player.calculateBuyingWish(player, currentCell.getColor()));
         return player.calculateBuyingWish(player, currentCell.getColor()) > 40;
     }
 

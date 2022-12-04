@@ -18,8 +18,8 @@ public class MonopolyGame {
         }
 
         public void nextTour(Player player) {
-                System.out.println("\nTurn n°" + this.turnCounter + ": " + player.getName() + " is playing:");
-                System.out.println(player.toString());
+                player.getInfoLogger().append("\nTurn n°" + this.turnCounter + ": " + player.getName() + " is playing:\n");
+                player.getInfoLogger().append(player.toString()+ "\n");
 
                 if (!player.isSynchronized())
                         throw new DesynchronizedPlayerException();
@@ -31,7 +31,7 @@ public class MonopolyGame {
                         player.movePawnOf(player.rollDoubleDice());
 
                 Cell playerCurrentCell = Board.getCellWithId(player.getPawnPosition());
-                System.out.println(playerCurrentCell.toString());
+                player.getInfoLogger().append(playerCurrentCell.toString()+ "\n");
                 playerCurrentCell.trigger(player);
                 this.turnCounter++;
         }

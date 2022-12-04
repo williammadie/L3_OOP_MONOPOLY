@@ -18,7 +18,7 @@ public class MonopolyStandAlone {
                 new Player(GameLogic.generateUniquePlayerName(), new BuyColorOnly(Color.ORANGE)));
 
         // Gameloop
-        Player winner = GameLogic.playTheGame(playersInSession);
+        Player winner = GameLogic.playTheGame(playersInSession,null,null);
 
         System.out.println("Player " + winner.getName() + " wins the game!");
     }

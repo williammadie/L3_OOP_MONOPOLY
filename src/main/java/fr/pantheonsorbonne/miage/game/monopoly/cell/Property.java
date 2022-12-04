@@ -45,7 +45,7 @@ public abstract class Property extends Cell {
     }
 
     private void payRent(Player player) {
-        System.out.println(player.getName() + " has to pay " + this.getRentValue() + "Eur to " + this.owner.getName());
+        player.getInfoLogger().append(player.getName() + " has to pay " + this.getRentValue() + "Eur to " + this.owner.getName()+ "\n");
         player.pay(this.getRentValue(), this.owner);
     }
 
@@ -72,7 +72,7 @@ public abstract class Property extends Cell {
             throw new CannotBuyException("Cell is already occupied.");
 
         player.removeMoney(price);
-        System.out.println(player.getName() + " buys cell " + super.name + " for " + this.price + "Eur");
+        player.getInfoLogger().append(player.getName() + " buys cell " + super.name + " for " + this.price + "Eur\n");
         player.addProperty(this);
     }
 
@@ -83,9 +83,8 @@ public abstract class Property extends Cell {
                     "Cell " + super.name + " does not belong to player " + player.getName());
 
         double sellingPrice = this.price * Property.SELLING_PRICE_COEFFICIENT;
-        System.out.println("Sell Cell");
         player.addMoney((int) sellingPrice);
-        System.out.println(player.getName() + " sells " + this.name + " for " + sellingPrice + "Eur");
+        player.getInfoLogger().append(player.getName() + " sells " + this.name + " for " + sellingPrice + "Eur\n");
         player.removeProperty(this);
     }
 

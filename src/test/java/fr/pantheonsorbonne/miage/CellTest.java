@@ -179,7 +179,6 @@ class CellTest {
         int previousBalanceAmount = player.getBalance();
         firstPublicService.trigger(player);
         int rentValue = previousBalanceAmount - player.getBalance();
-        System.out.println(rentValue);
         assertTrue(2 * 4 <= rentValue && rentValue <= 12 * 4);
 
         secondPublicService.buyCell(adversary);

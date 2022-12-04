@@ -110,7 +110,7 @@ public class Terrain extends Property {
             throw new CannotBuildException("Cell " + super.name + " is unbuildable");
 
         player.removeMoney(getHousePrice());
-        System.out.println(player.getName() + " buys a new house at cell " + super.name);
+        player.getInfoLogger().append(player.getName() + " buys a new house at cell " + super.name + "\n");
         this.buildNewHouse();
     }
 
@@ -123,9 +123,8 @@ public class Terrain extends Property {
             throw new CannotBuildException("Cell " + super.name + " is unsoldable");
 
         double sellingPrice = getHousePrice() * Property.SELLING_PRICE_COEFFICIENT;
-        System.out.println("Sell House");
         player.addMoney((int) sellingPrice);
-        System.out.println(player.getName() + " sells a house at cell " + super.name + " for " + sellingPrice + "Eur");
+        player.getInfoLogger().append(player.getName() + " sells a house at cell " + super.name + " for " + sellingPrice + "Eur\n");
         this.houseNumber--;
     }
 
