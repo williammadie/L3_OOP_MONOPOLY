@@ -22,6 +22,12 @@ public class Terrain extends Property {
         this.houseNumber++;
     }
 
+    /**
+     * Depending on their location on the board, house prices will vary. This
+     * returns the correct price for houses taking location into account.
+     * 
+     * @return
+     */
     public int getHousePrice() {
         switch (this.color) {
             case BROWN:

@@ -7,17 +7,20 @@ import java.util.stream.Collectors;
 
 import fr.pantheonsorbonne.miage.game.monopoly.DoubleDice;
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
+import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.StartingPoint;
-import fr.pantheonsorbonne.miage.game.monopoly.strategy.Hybrid;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.Strategy;
 
+/**
+ * This represent a local Monopoly player.
+ */
 public class Player {
     protected String name;
     private List<Property> properties;
-    private Strategy strategy;
+    protected Strategy strategy;
     protected int pawnPosition;
     private int rank;
     private int turnsPlayed;
@@ -34,7 +37,7 @@ public class Player {
         this.balance = 0;
         this.isJailed = false;
         this.infoLogger = new StringBuilder(); 
-        this.strategy = new Hybrid();
+        this.strategy = null;
     }
 
     public Player(String name, Strategy strategy) {
@@ -52,6 +55,13 @@ public class Player {
 
     public int getRank() {
         return this.rank;
+    }
+
+    /**
+     * This randomly initializes the player strategy.
+     */
+    public void createStrategy() {
+        this.strategy = GameLogic.getRandomStrategy();
     }
 
     public void refreshTurnsCounter() {
@@ -74,6 +84,11 @@ public class Player {
         return this.properties;
     }
 
+    /**
+     * This only returns the properties owned by the player with a given color.
+     * @param color
+     * @return a set of properties matching the given color
+     */
     public Set<Property> getProperties(Color color) {
         return this.properties.stream().filter(property -> property.getColor() == color).collect(Collectors.toSet());
     }
@@ -131,12 +146,24 @@ public class Player {
         p.setOwner(null);
     }
 
+    /**
+     * This returns the total number of player properties with a given color.
+     * 
+     * @param color
+     * @return an integer representing the total number of player properties with a
+     *         given color
+     */
     public int getOwnedPropertyNumberWithColor(Color color) {
         return (int) this.getProperties().stream()
                 .map(Property::getColor)
                 .filter(propertyColor -> propertyColor == color).count();
     }
 
+    /**
+     * This returns the total number of houses owned by the player.
+     * 
+     * @return the total number of houses owned by the player
+     */
     public int countPlayerHouses() {
         return this.properties.stream().map(Property::getHouseNumber).mapToInt(Integer::intValue).sum();
     }
@@ -146,6 +173,15 @@ public class Player {
         moneyReceiver.addMoneySafe(moneyAmount);
     }
 
+    /**
+     * This method is called when the player has to make a choice between doing an
+     * action or doing nothing. It allows the player to use a strategy. For
+     * instance, if the player has the opportunity to
+     * buy a cell, this will be called with the parameter BUY_CELL.
+     * 
+     * @param possibleAction an action among BUY_CELL, SELL_CELL, BUY_HOUSE and
+     *                       SELL_HOUSE
+     */
     public void makeChoice(GameAction possibleAction) {
         this.strategy.makeChoice(possibleAction, this);
     }
@@ -164,7 +200,7 @@ public class Player {
     }
 
     public void getStartingBonus(boolean isSafe) {
-        if (this.isJailed || this.turnsPlayed > 50)
+        if (this.isJailed || this.turnsPlayed > StartingPoint.NB_TURNS_WITH_START_BONUS)
             return;
         
         this.infoLogger.append("New turn! " + this.getName() + " receives " + StartingPoint.MONEY_GIFT_AMOUNT + "Eur (" + this.turnsPlayed + ")\n");
@@ -172,18 +208,6 @@ public class Player {
             this.addMoneySafe(StartingPoint.MONEY_GIFT_AMOUNT);
         else
             this.addMoney(StartingPoint.MONEY_GIFT_AMOUNT);
-    }
-
-    public int calculateBuyingWish(Player player, Color color) {
-
-        if (color.equals(Color.COLORLESS))
-            return 100;
-
-        if (player.getProperties().size() < 3) {
-            return Board.getNumberOfAdversaryOwnersForColor(player, color) > 0 ? 0 : 100;
-        }
-
-        return (getOwnedPropertyNumberWithColor(color) + 1 / Board.getExistingCellNumberWithColor(color)) * 100;
     }
 
     public boolean isSynchronized() {

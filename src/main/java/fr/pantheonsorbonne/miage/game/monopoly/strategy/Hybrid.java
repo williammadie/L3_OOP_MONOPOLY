@@ -1,10 +1,7 @@
 package fr.pantheonsorbonne.miage.game.monopoly.strategy;
 
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
-import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
-
 public class Hybrid extends Strategy {
+<<<<<<< HEAD
 
     @Override
     public boolean doBuyCell(Player player) {
@@ -12,4 +9,7 @@ public class Hybrid extends Strategy {
         return player.calculateBuyingWish(player, currentCell.getColor()) > 40;
     }
 
+=======
+    public static final String IDENTIFIER = "Hybrid";
+>>>>>>> doc-fix
 }

@@ -10,8 +10,13 @@ public enum GameAction {
     SEND_MONEY_TO(5),
     SEND_MONEY(6),
     CHECK_BALANCE(7),
+<<<<<<< HEAD
     END_TURN(8),
     SHOW_INFO(9),
+=======
+    GET_STRATEGY(8),
+    END_TURN(9),
+>>>>>>> doc-fix
     GAME_OVER(10);
 
     public final int value;
