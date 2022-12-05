@@ -2,9 +2,9 @@ package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-public abstract class Special extends Cell {
+public abstract class AbstractSpecial extends AbstractCell {
 
-    protected Special(String name) {
+    protected AbstractSpecial(String name) {
         super(name);
     }
 

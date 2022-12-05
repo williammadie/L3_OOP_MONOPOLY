@@ -5,7 +5,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 /**
  * This strategy forces the player to buy every time it is possible.
  */
-public class AlwaysBuy extends Strategy {
+public class AlwaysBuy extends AbstractStrategy {
     public static final String IDENTIFIER = "AlwaysBuy";
 
     @Override

@@ -13,7 +13,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuyException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.AbstractProperty;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.AlwaysBuy;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyAbovePrice;
@@ -28,6 +28,7 @@ class StrategyTest {
 
     @BeforeEach
     void setUp() throws CannotBuyException {
+        Board.reset();
         this.p1 = new Player("p1", new AlwaysBuy());
         this.p2 = new Player("p2", new BuyAbovePrice());
         this.p3 = new Player("p3", new BuyColorOnly(Color.ORANGE, Color.LIGHT_BLUE));
@@ -41,7 +42,7 @@ class StrategyTest {
     @Test
     void handleBuyCellTestTerrain() {
         this.p3.movePawnTo(9);
-        Property property = (Property) Board.getCellWithId(9);
+        AbstractProperty property = (AbstractProperty) Board.getCellWithId(9);
         this.p3.getStrategy().handleBuyCell(p3);
         assertTrue(p3.getProperties().contains(property));
     }
@@ -49,7 +50,7 @@ class StrategyTest {
     @Test
     void handleBuyCellTestStation() {
         this.p3.movePawnTo(5);
-        Property property = (Property) Board.getCellWithId(5);
+        AbstractProperty property = (AbstractProperty) Board.getCellWithId(5);
         this.p3.getStrategy().handleBuyCell(p3);
         assertTrue(p3.getProperties().contains(property));
     }
@@ -57,7 +58,7 @@ class StrategyTest {
     @Test
     void handleBuyCellTestBrownTerrain() {
         this.p3.movePawnTo(1);
-        Property property = (Property) Board.getCellWithId(9);
+        AbstractProperty property = (AbstractProperty) Board.getCellWithId(9);
         this.p3.getStrategy().handleBuyCell(p3);
         assertFalse(p3.getProperties().contains(property));
     }
@@ -65,7 +66,7 @@ class StrategyTest {
     @Test
     void handleBuyCellTestAbovePrice() {
         this.p2.movePawnTo(34);
-        Property property = (Property) Board.getCellWithId(34);
+        AbstractProperty property = (AbstractProperty) Board.getCellWithId(34);
         this.p2.getStrategy().handleBuyCell(p2);
         assertTrue(p2.getProperties().contains(property));
     }
@@ -73,7 +74,7 @@ class StrategyTest {
     @Test
     void handleBuyCellTestHybrid() {
         this.p3.movePawnTo(9);
-        Property property = (Property) Board.getCellWithId(9);
+        AbstractProperty property = (AbstractProperty) Board.getCellWithId(9);
         this.p3.getStrategy().handleBuyCell(p3);
         assertTrue(p3.getProperties().contains(property));
     }
@@ -81,7 +82,7 @@ class StrategyTest {
     @Test
     void handleSellCellTest() {
         this.p1.movePawnTo(9);
-        Property property = (Property) Board.getCellWithId(9);
+        AbstractProperty property = (AbstractProperty) Board.getCellWithId(9);
         this.p1.getStrategy().handleBuyCell(p1);
         this.p1.getStrategy().handleSellCell(p1);
         assertFalse(p1.getProperties().contains(property));

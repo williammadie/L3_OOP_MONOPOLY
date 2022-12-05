@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.AbstractCell;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 
-public class BuyColorOnly extends Strategy {
+public class BuyColorOnly extends AbstractStrategy {
     public static final String IDENTIFIER = "BuyColorOnly";
     private List<Color> colors;
 
@@ -27,9 +27,8 @@ public class BuyColorOnly extends Strategy {
 
     @Override
     public boolean doBuyCell(Player player) {
-        Cell currentCell = Board.getCellWithId(player.getPawnPosition());
-        System.out.println(this.colors.toString());
-        if (currentCell.getColor().equals(Color.COLORLESS))
+        AbstractCell currentCell = Board.getCellWithId(player.getPawnPosition());
+        if (currentCell.getColor() == Color.COLORLESS)
             return true;
 
         if (!colors.contains(currentCell.getColor()))

@@ -10,17 +10,17 @@ import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.AbstractProperty;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.StartingPoint;
-import fr.pantheonsorbonne.miage.game.monopoly.strategy.Strategy;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.AbstractStrategy;
 
 /**
  * This represent a local Monopoly player.
  */
 public class Player {
     protected String name;
-    private List<Property> properties;
-    protected Strategy strategy;
+    private List<AbstractProperty> properties;
+    protected AbstractStrategy strategy;
     protected int pawnPosition;
     private int rank;
     private int turnsPlayed;
@@ -36,11 +36,11 @@ public class Player {
         this.turnsPlayed = 0;
         this.balance = 0;
         this.isJailed = false;
-        this.infoLogger = new StringBuilder(); 
+        this.infoLogger = new StringBuilder();
         this.strategy = null;
     }
 
-    public Player(String name, Strategy strategy) {
+    public Player(String name, AbstractStrategy strategy) {
         this(name);
         this.strategy = strategy;
     }
@@ -80,16 +80,17 @@ public class Player {
         return balance;
     }
 
-    public List<Property> getProperties() {
+    public List<AbstractProperty> getProperties() {
         return this.properties;
     }
 
     /**
      * This only returns the properties owned by the player with a given color.
+     * 
      * @param color
      * @return a set of properties matching the given color
      */
-    public Set<Property> getProperties(Color color) {
+    public Set<AbstractProperty> getProperties(Color color) {
         return this.properties.stream().filter(property -> property.getColor() == color).collect(Collectors.toSet());
     }
 
@@ -101,7 +102,7 @@ public class Player {
         this.isJailed = state;
     }
 
-    public Strategy getStrategy() {
+    public AbstractStrategy getStrategy() {
         return this.strategy;
     }
 
@@ -134,14 +135,14 @@ public class Player {
         this.removeMoney(price);
     }
 
-    public void addProperty(Property p) {
+    public void addProperty(AbstractProperty p) {
         if (p.isVacant()) {
             this.properties.add(p);
             p.setOwner(this);
         }
     }
 
-    public void removeProperty(Property p) {
+    public void removeProperty(AbstractProperty p) {
         this.properties.remove(p);
         p.setOwner(null);
     }
@@ -155,7 +156,7 @@ public class Player {
      */
     public int getOwnedPropertyNumberWithColor(Color color) {
         return (int) this.getProperties().stream()
-                .map(Property::getColor)
+                .map(AbstractProperty::getColor)
                 .filter(propertyColor -> propertyColor == color).count();
     }
 
@@ -165,7 +166,7 @@ public class Player {
      * @return the total number of houses owned by the player
      */
     public int countPlayerHouses() {
-        return this.properties.stream().map(Property::getHouseNumber).mapToInt(Integer::intValue).sum();
+        return this.properties.stream().map(AbstractProperty::getHouseNumber).mapToInt(Integer::intValue).sum();
     }
 
     public void pay(int moneyAmount, Player moneyReceiver) {
@@ -195,15 +196,16 @@ public class Player {
         if (cellId < this.pawnPosition && cellId != 0)
             getStartingBonus(false);
 
-        this.infoLogger.append(this.getName() + " moves to cell n°" + cellId+ "\n");
+        this.infoLogger.append(this.getName() + " moves to cell n°" + cellId + "\n");
         this.pawnPosition = cellId;
     }
 
     public void getStartingBonus(boolean isSafe) {
         if (this.isJailed || this.turnsPlayed > StartingPoint.NB_TURNS_WITH_START_BONUS)
             return;
-        
-        this.infoLogger.append("New turn! " + this.getName() + " receives " + StartingPoint.MONEY_GIFT_AMOUNT + "Eur (" + this.turnsPlayed + ")\n");
+
+        this.infoLogger
+                .append("New turn! " + this.getName() + " receives " + StartingPoint.MONEY_GIFT_AMOUNT + "Eur\n");
         if (isSafe)
             this.addMoneySafe(StartingPoint.MONEY_GIFT_AMOUNT);
         else
@@ -221,12 +223,11 @@ public class Player {
             System.out.println(this.name + " went bankrupt!");
     }
 
-
-    public StringBuilder getInfoLogger(){
+    public StringBuilder getInfoLogger() {
         return this.infoLogger;
     }
 
-    public void printPlayerActions(){
+    public void printPlayerActions() {
         System.out.print(this.infoLogger.toString());
         infoLogger.setLength(0);
     }

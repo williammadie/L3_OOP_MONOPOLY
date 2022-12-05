@@ -13,6 +13,7 @@ import fr.pantheonsorbonne.miage.model.Game;
 
 public class MonopolyHost {
     private static final int NB_MAX_PLAYERS = 3;
+
     public static void main(String[] args) {
         PlayerFacade playerFacade = Facade.getFacade();
         HostFacade hostFacade = Facade.getFacade();
@@ -20,13 +21,14 @@ public class MonopolyHost {
         hostFacade.waitReady();
 
         Player host = new Player(GameLogic.generateUniquePlayerName(), GameLogic.getRandomStrategy());
-        playerFacade.createNewPlayer(host.getName());        
+        playerFacade.createNewPlayer(host.getName());
         playersInSession.add(host);
 
         Game game = hostFacade.createNewGame("monopoly-room-1");
         hostFacade.waitForExtraPlayerCount(NB_MAX_PLAYERS);
-        playersInSession.addAll(game.getPlayers().stream().map(playerName -> new NetworkPlayer(playerName, playerFacade, game)).toList());
-        Player winner = GameLogic.playTheGame(playersInSession,game, playerFacade);
+        playersInSession.addAll(game.getPlayers().stream()
+                .map(playerName -> new NetworkPlayer(playerName, playerFacade, game)).toList());
+        Player winner = GameLogic.playTheGame(playersInSession, game, playerFacade);
         winner.declareGameOver("winner");
     }
 }

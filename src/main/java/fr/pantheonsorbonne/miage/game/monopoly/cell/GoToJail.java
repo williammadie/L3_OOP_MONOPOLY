@@ -2,8 +2,9 @@ package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-public class GoToJail extends Special {
+public class GoToJail extends AbstractSpecial {
     private static final int JAIL_CELL_ID = 10;
+
     public GoToJail(String name) {
         super(name);
     }
@@ -13,5 +14,5 @@ public class GoToJail extends Special {
         player.movePawnTo(JAIL_CELL_ID);
         player.setIsJailed(true);
     }
-    
+
 }

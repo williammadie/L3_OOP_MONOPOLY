@@ -15,7 +15,7 @@ import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuyException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuildException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.AbstractProperty;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
 class PlayerTest {
@@ -24,6 +24,7 @@ class PlayerTest {
 
     @BeforeEach
     void setUp() throws CannotBuyException {
+        Board.reset();
         this.player = new Player("testPlayer");
         this.adversary = new Player("testAdversary");
         player.addMoney(20000);
@@ -46,14 +47,14 @@ class PlayerTest {
 
     @Test
     void testAddProperty() {
-        Property newProperty = (Property) Board.getCellWithId(39);
+        AbstractProperty newProperty = (AbstractProperty) Board.getCellWithId(39);
         player.addProperty(newProperty);
         assertTrue(player.getProperties().contains(newProperty));
     }
 
     @Test
     void testRemoveProperty() {
-        Property otherProperty = (Property) Board.getCellWithId(39);
+        AbstractProperty otherProperty = (AbstractProperty) Board.getCellWithId(39);
         player.addProperty(otherProperty);
         player.removeProperty(otherProperty);
         assertFalse(player.getProperties().contains(otherProperty));
@@ -61,14 +62,14 @@ class PlayerTest {
 
     @Test
     void testGetPropertiesColor() {
-        Property newProperty = (Property) Board.getCellWithId(39);
-        Property newProperty2 = (Property) Board.getCellWithId(37);
+        AbstractProperty newProperty = (AbstractProperty) Board.getCellWithId(39);
+        AbstractProperty newProperty2 = (AbstractProperty) Board.getCellWithId(37);
         player.addProperty(newProperty);
         player.addProperty(newProperty2);
 
         assertTrue(player.getProperties(Color.ORANGE).isEmpty());
-        List<Property> expectedProperties = Arrays.asList(newProperty, newProperty2);
-        List<Property> actualProperties = player.getProperties(Color.DEEP_BLUE).stream().toList();
+        List<AbstractProperty> expectedProperties = Arrays.asList(newProperty, newProperty2);
+        List<AbstractProperty> actualProperties = player.getProperties(Color.DEEP_BLUE).stream().toList();
         assertEquals(expectedProperties.size(), actualProperties.size());
         assertTrue(expectedProperties.containsAll(actualProperties));
     }
@@ -82,9 +83,9 @@ class PlayerTest {
 
     @Test
     void testCountPlayerHouses() throws CannotBuildException {
-        Property p1 = (Property) Board.getCellWithId(6);
-        Property p2 = (Property) Board.getCellWithId(8);
-        Property p3 = (Property) Board.getCellWithId(9);
+        AbstractProperty p1 = (AbstractProperty) Board.getCellWithId(6);
+        AbstractProperty p2 = (AbstractProperty) Board.getCellWithId(8);
+        AbstractProperty p3 = (AbstractProperty) Board.getCellWithId(9);
         player.addProperty(p1);
         player.addProperty(p2);
         player.addProperty(p3);

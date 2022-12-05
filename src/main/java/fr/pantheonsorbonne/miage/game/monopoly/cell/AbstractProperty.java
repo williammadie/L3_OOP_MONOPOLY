@@ -3,14 +3,14 @@ package fr.pantheonsorbonne.miage.game.monopoly.cell;
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-public abstract class Property extends Cell {
+public abstract class AbstractProperty extends AbstractCell {
     public static final double SELLING_PRICE_COEFFICIENT = 0.75;
     private static final int NO_HOUSE = 0;
     protected int price;
     protected Player owner;
     protected Color color;
 
-    protected Property(String name, int price, Color color) {
+    protected AbstractProperty(String name, int price, Color color) {
         super(name);
         this.price = price;
         this.color = color;
@@ -45,7 +45,8 @@ public abstract class Property extends Cell {
     }
 
     private void payRent(Player player) {
-        player.getInfoLogger().append(player.getName() + " has to pay " + this.getRentValue() + "Eur to " + this.owner.getName()+ "\n");
+        player.getInfoLogger().append(
+                player.getName() + " has to pay " + this.getRentValue() + "Eur to " + this.owner.getName() + "\n");
         player.pay(this.getRentValue(), this.owner);
     }
 
@@ -82,7 +83,7 @@ public abstract class Property extends Cell {
             throw new CannotSellException(
                     "Cell " + super.name + " does not belong to player " + player.getName());
 
-        double sellingPrice = this.price * Property.SELLING_PRICE_COEFFICIENT;
+        double sellingPrice = this.price * AbstractProperty.SELLING_PRICE_COEFFICIENT;
         player.addMoney((int) sellingPrice);
         player.getInfoLogger().append(player.getName() + " sells " + this.name + " for " + sellingPrice + "Eur\n");
         player.removeProperty(this);

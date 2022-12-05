@@ -19,7 +19,7 @@ class GameLoopTest {
     private Deque<Player> players;
 
     @BeforeEach
-    void init() {
+    void setUp() {
         this.playersInSession = Arrays.asList(
                 new Player(GameLogic.getUniquePlayerName()),
                 new Player(GameLogic.getUniquePlayerName()),

@@ -20,7 +20,7 @@ public class DoubleDice {
         return hasDoubleValue;
     }
 
-    private int rollSingleDice() {
+    private static int rollSingleDice() {
         return GameLogic.getRandomNumberBetween(1, MAX_DICE_VALUE);
     }
 }

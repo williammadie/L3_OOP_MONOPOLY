@@ -6,14 +6,14 @@ import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
  * This class represents a single unit of the Monopoly board. There are 40 of
  * these units. Each one has its own values and specifications.
  */
-public abstract class Cell {
+public abstract class AbstractCell {
     public static final int MAX_HOUSE_NUMBER = 4;
     private static final int NO_PRICE = 0;
     private static int cellIdCounter = 0;
     protected String name;
     protected int cellId;
 
-    protected Cell(String name) {
+    protected AbstractCell(String name) {
         this.name = name;
         this.cellId = cellIdCounter++;
     }

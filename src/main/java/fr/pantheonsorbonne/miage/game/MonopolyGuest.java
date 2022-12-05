@@ -17,7 +17,7 @@ public class MonopolyGuest {
         facade.createNewPlayer(playerName);
         System.out.println("I am: " + playerName);
         // wait until we are able to join a new game
-        Game currentGame = facade.autoJoinGame("monopoly-room-2");
+        Game currentGame = facade.autoJoinGame("monopoly-room-1");
         Player me = new Player(playerName, GameLogic.getRandomStrategy());
 
         // Decision loop

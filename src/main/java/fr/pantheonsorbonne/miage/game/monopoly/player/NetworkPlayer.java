@@ -6,7 +6,7 @@ import fr.pantheonsorbonne.miage.PlayerFacade;
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.GameLogic;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.AbstractCell;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.AlwaysBuy;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyAbovePrice;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyColorOnly;
@@ -114,15 +114,13 @@ public class NetworkPlayer extends Player {
                 new GameCommand(GameAction.END_TURN.name()));
     }
 
-<<<<<<< HEAD
-    @Override 
-    public void printPlayerActions(){
-        playerFacade.sendGameCommandToAll(game, new GameCommand(GameAction.SHOW_INFO.name(),this.infoLogger.toString()));
+    @Override
+    public void printPlayerActions() {
+        playerFacade.sendGameCommandToAll(game,
+                new GameCommand(GameAction.SHOW_INFO.name(), this.infoLogger.toString()));
         super.printPlayerActions();
     }
 
-    private void handleBuyHouse() {
-=======
     @Override
     public void createStrategy() {
         playerFacade.sendGameCommandToPlayer(game, this.getName(),
@@ -150,7 +148,6 @@ public class NetworkPlayer extends Player {
     }
 
     private void triggerBuyHouse() {
->>>>>>> doc-fix
         playerFacade.sendGameCommandToPlayer(game, this.getName(),
                 new GameCommand(GameAction.BUY_HOUSE.name(), Integer.toString(this.pawnPosition)));
         GameCommand command = playerFacade.receiveGameCommand(game);
@@ -162,7 +159,7 @@ public class NetworkPlayer extends Player {
         if (cellToBuyHouseId == GameAction.ABORT_ACTION.value)
             return;
 
-        Cell cellToBuyHouse = Board.getCellWithId(cellToBuyHouseId);
+        AbstractCell cellToBuyHouse = Board.getCellWithId(cellToBuyHouseId);
         try {
             cellToBuyHouse.buyHouse(this);
         } catch (CannotBuildException e1) {
@@ -183,7 +180,7 @@ public class NetworkPlayer extends Player {
             return;
 
         try {
-            Cell currentCell = Board.getCellWithId(this.pawnPosition);
+            AbstractCell currentCell = Board.getCellWithId(this.pawnPosition);
             currentCell.buyCell(this);
         } catch (CannotBuyException e) {
             e.printStackTrace();
@@ -203,7 +200,7 @@ public class NetworkPlayer extends Player {
             return;
 
         int cellToSellHouseId = Integer.parseInt(command.body());
-        Cell cellToSellHouse = Board.getCellWithId(cellToSellHouseId);
+        AbstractCell cellToSellHouse = Board.getCellWithId(cellToSellHouseId);
         try {
             cellToSellHouse.sellHouse(this);
         } catch (CannotBuildException e) {
@@ -223,7 +220,7 @@ public class NetworkPlayer extends Player {
             return;
 
         int cellToSellCellId = Integer.parseInt(command.body());
-        Cell cellToSellCell = Board.getCellWithId(cellToSellCellId);
+        AbstractCell cellToSellCell = Board.getCellWithId(cellToSellCellId);
         try {
             cellToSellCell.sellCell(this);
         } catch (CannotSellException e) {

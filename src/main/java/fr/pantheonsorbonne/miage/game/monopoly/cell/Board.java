@@ -4,24 +4,24 @@ import java.util.Arrays;
 
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-public class Board {
+public final class Board {
 	private static final String OPPORTUNITY_CELL_NAME = "Case Chance";
-	private static final Cell[] gameBoard = initGameBoard();
+	private static final AbstractCell[] gameBoard = initGameBoard();
 	public static final int BOARD_LENGTH = gameBoard.length;
 
 	private Board() {
 	}
 
-	public static Cell getCellWithId(int id) {
+	public static AbstractCell getCellWithId(int id) {
 		return gameBoard[id];
 	}
 
-	public static Cell[] getGameBoard() {
+	public static AbstractCell[] getGameBoard() {
 		return gameBoard;
 	}
 
-	private static Cell[] initGameBoard() {
-		return new Cell[] {
+	private static AbstractCell[] initGameBoard() {
+		return new AbstractCell[] {
 				new StartingPoint("Case Départ"),
 				new Terrain("Boulevard de Belleville", 60, Color.BROWN,
 						new int[] { 2, 4, 10, 30, 90, 160 }),
@@ -130,6 +130,6 @@ public class Board {
 	 * This restores the default values for each cell of the Monopoly board.
 	 */
 	public static void reset() {
-		Arrays.stream(gameBoard).forEach(Cell::reset);
+		Arrays.stream(gameBoard).forEach(AbstractCell::reset);
 	}
 }

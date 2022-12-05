@@ -2,7 +2,7 @@ package fr.pantheonsorbonne.miage.game.monopoly.cell;
 
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-public class Terrain extends Property {
+public class Terrain extends AbstractProperty {
     private int[] rent;
     private int houseNumber;
 
@@ -29,19 +29,25 @@ public class Terrain extends Property {
      * @return
      */
     public int getHousePrice() {
+        int housePrice;
         switch (this.color) {
             case BROWN:
             case LIGHT_BLUE:
-                return 50;
+                housePrice = 50;
+                break;
             case PINK:
             case ORANGE:
-                return 100;
+                housePrice = 100;
+                break;
             case RED:
             case YELLOW:
-                return 150;
+                housePrice = 150;
+                break;
             default:
-                return 200;
+                housePrice = 200;
+                break;
         }
+        return housePrice;
     }
 
     @Override
@@ -55,13 +61,10 @@ public class Terrain extends Property {
     }
 
     private boolean isBuildable() {
-        if (this.owner == null)
+        if (this.owner == null || !doPlayerHasAllTerrainOfColor(this.owner, this.color))
             return false;
 
-        if (!doPlayerHasAllTerrainOfColor(this.owner, this.color))
-            return false;
-
-        if (this.houseNumber >= Cell.MAX_HOUSE_NUMBER)
+        if (this.houseNumber >= AbstractCell.MAX_HOUSE_NUMBER)
             return false;
 
         return doOtherCellsOfColorHaveAtLeast(this.houseNumber);
@@ -87,7 +90,7 @@ public class Terrain extends Property {
 
     public boolean doOtherCellsOfColorHaveAtLeast(int minimumRequiredHouseNumber) {
         boolean result = true;
-        for (Property property : this.owner.getProperties(this.color)) {
+        for (AbstractProperty property : this.owner.getProperties(this.color)) {
             if (property.getHouseNumber() < minimumRequiredHouseNumber) {
                 result = false;
                 break;
@@ -98,7 +101,7 @@ public class Terrain extends Property {
 
     public boolean doOtherCellsOfColorHaveAtMost(int maximumRequiredHouseNumber) {
         boolean result = true;
-        for (Property property : this.owner.getProperties(this.color)) {
+        for (AbstractProperty property : this.owner.getProperties(this.color)) {
             if (property.getHouseNumber() > maximumRequiredHouseNumber) {
                 result = false;
                 break;
@@ -128,9 +131,10 @@ public class Terrain extends Property {
         if (!this.isSoldable())
             throw new CannotBuildException("Cell " + super.name + " is unsoldable");
 
-        double sellingPrice = getHousePrice() * Property.SELLING_PRICE_COEFFICIENT;
+        double sellingPrice = getHousePrice() * AbstractProperty.SELLING_PRICE_COEFFICIENT;
         player.addMoney((int) sellingPrice);
-        player.getInfoLogger().append(player.getName() + " sells a house at cell " + super.name + " for " + sellingPrice + "Eur\n");
+        player.getInfoLogger()
+                .append(player.getName() + " sells a house at cell " + super.name + " for " + sellingPrice + "Eur\n");
         this.houseNumber--;
     }
 

@@ -11,19 +11,19 @@ import java.util.stream.Collectors;
 
 import com.github.javafaker.Faker;
 
-import fr.pantheonsorbonne.miage.PlayerFacade;
+import fr.pantheonsorbonne.miage.Facade;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 import fr.pantheonsorbonne.miage.game.monopoly.player.PlayerRankComparator;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.Hybrid;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyAbovePrice;
 import fr.pantheonsorbonne.miage.game.monopoly.strategy.BuyColorOnly;
-import fr.pantheonsorbonne.miage.game.monopoly.strategy.Strategy;
+import fr.pantheonsorbonne.miage.game.monopoly.strategy.AbstractStrategy;
 import fr.pantheonsorbonne.miage.model.Game;
 import fr.pantheonsorbonne.miage.model.GameCommand;
 
-public class GameLogic {
-    public static final Random RAND = new Random();
+public final class GameLogic {
+    private static final Random RAND = new Random();
 
     private GameLogic() {
     }
@@ -60,7 +60,7 @@ public class GameLogic {
         return Color.values()[getRandomNumberBetween(0, Color.values().length - 1)];
     }
 
-    public static Strategy inputStrategy(Player player) {
+    public static AbstractStrategy inputStrategy(Player player) {
         int selectedNumber;
         for (;;) {
             System.out.println("Please select a strategy number for player " + player.getName());
@@ -80,13 +80,13 @@ public class GameLogic {
         return selectStrategy(selectedNumber);
     }
 
-    public static Strategy getRandomStrategy() {
+    public static AbstractStrategy getRandomStrategy() {
         int choice = getRandomNumberBetween(0, 3);
         return selectStrategy(choice);
     }
 
-    public static Strategy selectStrategy(int selectedNumber) {
-        Strategy selectedStrategy;
+    public static AbstractStrategy selectStrategy(int selectedNumber) {
+        AbstractStrategy selectedStrategy;
         switch (selectedNumber) {
             case 0:
                 System.out.println("AlwaysBuy Strategy selected");
@@ -131,7 +131,7 @@ public class GameLogic {
      * @param command     the command to process
      * @param me          the player on which the command will be processed
      */
-    public static void executeGameCommand(PlayerFacade facade, Game currentGame, GameCommand command, Player me) {
+    public static void executeGameCommand(Facade facade, Game currentGame, GameCommand command, Player me) {
         GameAction action = GameAction.valueOf(command.name());
         switch (action) {
             case CHECK_BALANCE:
@@ -180,7 +180,7 @@ public class GameLogic {
                         new GameCommand(GameAction.SELL_HOUSE.name(), Integer.toString(cellToSellHouseId)));
                 break;
 
-            case SEND_MONEY_TO: // cashAmount, targetedPlayerName
+            case SEND_MONEY_TO:
                 String cashAmount;
                 if (!command.body().contains(",")) {
                     cashAmount = command.body();
@@ -207,7 +207,7 @@ public class GameLogic {
                 break;
             default:
                 throw new NoSuchElementException("Unexpected game action: " + action);
-            
+
         }
     }
 
@@ -218,7 +218,7 @@ public class GameLogic {
      * @param playersInSession
      * @return the winner of the game
      */
-    public static Player playTheGame(List<Player> playersInSession, Game currentGame, PlayerFacade playerFacade) {
+    public static Player playTheGame(List<Player> playersInSession, Game currentGame, Facade playerFacade) {
         MonopolyGame monopolyGame = new MonopolyGame(playersInSession);
         Deque<Player> players = GameLogic.determinePlayersOrder(playersInSession);
 
@@ -239,8 +239,9 @@ public class GameLogic {
                 currentPlayer.declareGameOver("loser");
             }
             currentPlayer.refreshTurnsCounter();
-            if(currentGame != null && currentPlayer.getName().equals(currentGame.getHostName())){
-                playerFacade.sendGameCommandToAll(currentGame,new GameCommand(GameAction.SHOW_INFO.name(), currentPlayer.getInfoLogger().toString()));
+            if (currentGame != null && currentPlayer.getName().equals(currentGame.getHostName())) {
+                playerFacade.sendGameCommandToAll(currentGame,
+                        new GameCommand(GameAction.SHOW_INFO.name(), currentPlayer.getInfoLogger().toString()));
             }
             currentPlayer.printPlayerActions();
         } while (players.size() > 1);

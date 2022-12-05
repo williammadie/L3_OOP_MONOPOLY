@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.miage.game.monopoly.MonopolyGame;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.AbstractCell;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuyException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuildException;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
@@ -37,7 +37,7 @@ class CellTest {
     @Test
     void testTax1Trigger() {
         int previousBalanceAmount = player.getBalance();
-        Cell taxCell1 = Board.getCellWithId(4);
+        AbstractCell taxCell1 = Board.getCellWithId(4);
         taxCell1.trigger(player);
         assertEquals(previousBalanceAmount - 200, player.getBalance());
     }
@@ -45,14 +45,14 @@ class CellTest {
     @Test
     void testTax2Trigger() {
         int previousBalanceAmount = player.getBalance();
-        Cell taxCell2 = Board.getCellWithId(38);
+        AbstractCell taxCell2 = Board.getCellWithId(38);
         taxCell2.trigger(player);
         assertEquals(previousBalanceAmount - 100, player.getBalance());
     }
 
     @Test
     void testStationVacantTrigger() {
-        Cell vacantStation = Board.getCellWithId(15);
+        AbstractCell vacantStation = Board.getCellWithId(15);
         player.movePawnTo(15);
         vacantStation.trigger(player);
         assertTrue(player.getProperties().contains(vacantStation));
@@ -61,15 +61,15 @@ class CellTest {
     @Test
     void testStationOccupiedTrigger() {
         int previousBalanceAmount = player.getBalance();
-        Cell occupiedStation = Board.getCellWithId(4);
+        AbstractCell occupiedStation = Board.getCellWithId(4);
         occupiedStation.trigger(player);
         assertEquals(previousBalanceAmount - 200, player.getBalance());
     }
 
     @Test
     void testGoToJailTrigger() {
-        Cell goToJail = Board.getCellWithId(30);
-        Cell jail = Board.getCellWithId(10);
+        AbstractCell goToJail = Board.getCellWithId(30);
+        AbstractCell jail = Board.getCellWithId(10);
         goToJail.trigger(player);
         assertEquals(jail.getCellId(), player.getPawnPosition());
         assertTrue(player.getIsJailed());
@@ -77,15 +77,15 @@ class CellTest {
 
     @Test
     void testJailTrigger() {
-        Cell jail = Board.getCellWithId(10);
+        AbstractCell jail = Board.getCellWithId(10);
         jail.trigger(player);
         assertFalse(player.getIsJailed());
     }
 
     @Test
     void testLeaveJail() {
-        Cell goToJail = Board.getCellWithId(30);
-        Cell jail = Board.getCellWithId(10);
+        AbstractCell goToJail = Board.getCellWithId(30);
+        AbstractCell jail = Board.getCellWithId(10);
         goToJail.trigger(player);
         MonopolyGame game = new MonopolyGame(Arrays.asList(new Player[] { player, adversary }));
         game.nextTour(player);
@@ -97,8 +97,8 @@ class CellTest {
 
     @Test
     void testRentTerrainNoHouse() throws CannotBuyException {
-        Cell lastTerrain = Board.getCellWithId(39);
-        Cell beforeLastTerrain = Board.getCellWithId(37);
+        AbstractCell lastTerrain = Board.getCellWithId(39);
+        AbstractCell beforeLastTerrain = Board.getCellWithId(37);
         lastTerrain.buyCell(adversary);
         int previousBalanceAmount = player.getBalance();
         lastTerrain.trigger(player);
@@ -108,8 +108,8 @@ class CellTest {
 
     @Test
     void testRentTerrainFullColor() throws CannotBuyException {
-        Cell lastTerrain = Board.getCellWithId(39);
-        Cell beforeLastTerrain = Board.getCellWithId(37);
+        AbstractCell lastTerrain = Board.getCellWithId(39);
+        AbstractCell beforeLastTerrain = Board.getCellWithId(37);
         lastTerrain.buyCell(adversary);
         beforeLastTerrain.buyCell(adversary);
         int previousBalanceAmount = player.getBalance();
@@ -119,8 +119,8 @@ class CellTest {
 
     @Test
     void testRentTerrainWithHouses() throws CannotBuyException, CannotBuildException {
-        Cell lastTerrain = Board.getCellWithId(39);
-        Cell beforeLastTerrain = Board.getCellWithId(37);
+        AbstractCell lastTerrain = Board.getCellWithId(39);
+        AbstractCell beforeLastTerrain = Board.getCellWithId(37);
         lastTerrain.buyCell(adversary);
         beforeLastTerrain.buyCell(adversary);
         int previousBalanceAmount = player.getBalance();
@@ -148,10 +148,10 @@ class CellTest {
 
     @Test
     void testRentStation() throws CannotBuyException {
-        Cell firstSation = Board.getCellWithId(5);
-        Cell secondStation = Board.getCellWithId(15);
-        Cell thirdSation = Board.getCellWithId(25);
-        Cell fourthStation = Board.getCellWithId(35);
+        AbstractCell firstSation = Board.getCellWithId(5);
+        AbstractCell secondStation = Board.getCellWithId(15);
+        AbstractCell thirdSation = Board.getCellWithId(25);
+        AbstractCell fourthStation = Board.getCellWithId(35);
 
         int previousBalanceAmount = player.getBalance();
         firstSation.trigger(player);
@@ -172,8 +172,8 @@ class CellTest {
 
     @RepeatedTest(10)
     void testRentPublicService() throws CannotBuyException {
-        Cell firstPublicService = Board.getCellWithId(12);
-        Cell secondPublicService = Board.getCellWithId(28);
+        AbstractCell firstPublicService = Board.getCellWithId(12);
+        AbstractCell secondPublicService = Board.getCellWithId(28);
 
         firstPublicService.buyCell(adversary);
         int previousBalanceAmount = player.getBalance();

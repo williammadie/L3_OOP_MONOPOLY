@@ -5,7 +5,7 @@ import java.util.HashMap;
 import fr.pantheonsorbonne.miage.game.monopoly.DoubleDice;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
-public class Jail extends Special {
+public class Jail extends AbstractSpecial {
     public static final int JAIL_CELL_ID = 10;
     private static final HashMap<Player, Integer> turnCounter = new HashMap<>();
 
@@ -30,7 +30,7 @@ public class Jail extends Special {
             turnCounter.remove(player);
             player.setIsJailed(false);
         }
-            
+
     }
-    
+
 }

@@ -4,18 +4,19 @@ import java.util.NoSuchElementException;
 
 import fr.pantheonsorbonne.miage.game.monopoly.GameAction;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.AbstractCell;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Color;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuyException;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Property;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.AbstractProperty;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotBuildException;
 import fr.pantheonsorbonne.miage.game.monopoly.cell.CannotSellException;
 
 /**
- * This class allows the player to play with different strategies. All strategies must extends this basic class.
+ * This class allows the player to play with different strategies. All
+ * strategies must extends this basic class.
  */
-public abstract class Strategy {
+public abstract class AbstractStrategy {
 
     public void makeChoice(GameAction possibleAction, Player player) {
         switch (possibleAction) {
@@ -44,7 +45,7 @@ public abstract class Strategy {
         if (!doBuyCell(player))
             return -1;
 
-        Cell currentCell = Board.getCellWithId(player.getPawnPosition());
+        AbstractCell currentCell = Board.getCellWithId(player.getPawnPosition());
         try {
             currentCell.buyCell(player);
             return currentCell.getCellId();
@@ -60,7 +61,7 @@ public abstract class Strategy {
             return GameAction.ABORT_ACTION.value;
 
         try {
-            Cell cellToSell = player.getProperties().get(0);
+            AbstractCell cellToSell = player.getProperties().get(0);
             cellToSell.sellCell(player);
             return cellToSell.getCellId();
         } catch (CannotSellException e1) {
@@ -71,7 +72,7 @@ public abstract class Strategy {
     }
 
     public final int handleBuyHouse(Player player) {
-        for (Property property : player.getProperties()) {
+        for (AbstractProperty property : player.getProperties()) {
             if (tryToBuyHouse(player, property))
                 return property.getCellId();
         }
@@ -79,14 +80,14 @@ public abstract class Strategy {
     }
 
     public final int handleSellHouse(Player player) {
-        for (Property property : player.getProperties()) {
+        for (AbstractProperty property : player.getProperties()) {
             if (tryToSellHouse(player, property))
                 return property.getCellId();
         }
         return GameAction.ABORT_ACTION.value;
     }
 
-    private boolean tryToBuyHouse(Player player, Property property) {
+    private static boolean tryToBuyHouse(Player player, AbstractProperty property) {
         try {
             property.buyHouse(player);
             return true;
@@ -95,7 +96,7 @@ public abstract class Strategy {
         }
     }
 
-    private boolean tryToSellHouse(Player player, Property property) {
+    private static boolean tryToSellHouse(Player player, AbstractProperty property) {
         if (player.getProperties().isEmpty() || property.getHouseNumber() == 0) {
             return false;
         }
@@ -109,7 +110,7 @@ public abstract class Strategy {
     }
 
     public boolean doBuyCell(Player player) {
-        Cell currentCell = Board.getCellWithId(player.getPawnPosition());
+        AbstractCell currentCell = Board.getCellWithId(player.getPawnPosition());
         return this.calculateBuyingWish(player, currentCell.getColor()) > 40;
     }
 
@@ -122,11 +123,12 @@ public abstract class Strategy {
      * 
      * @param player
      * @param color
-     * @return a mark between 0 and 100 (both included) which represent the desire to buy
+     * @return a mark between 0 and 100 (both included) which represent the desire
+     *         to buy
      */
     public int calculateBuyingWish(Player player, Color color) {
 
-        if (color.equals(Color.COLORLESS))
+        if (color == Color.COLORLESS)
             return 100;
 
         if (player.getProperties().size() < 3) {

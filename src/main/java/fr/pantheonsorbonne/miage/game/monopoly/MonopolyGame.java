@@ -3,7 +3,7 @@ package fr.pantheonsorbonne.miage.game.monopoly;
 import java.util.List;
 
 import fr.pantheonsorbonne.miage.game.monopoly.cell.Board;
-import fr.pantheonsorbonne.miage.game.monopoly.cell.Cell;
+import fr.pantheonsorbonne.miage.game.monopoly.cell.AbstractCell;
 import fr.pantheonsorbonne.miage.game.monopoly.player.DesynchronizedPlayerException;
 import fr.pantheonsorbonne.miage.game.monopoly.player.Player;
 
@@ -18,8 +18,9 @@ public class MonopolyGame {
         }
 
         public void nextTour(Player player) {
-                player.getInfoLogger().append("\nTurn n°" + this.turnCounter + ": " + player.getName() + " is playing:\n");
-                player.getInfoLogger().append(player.toString()+ "\n");
+                player.getInfoLogger()
+                                .append("\nTurn n°" + this.turnCounter + ": " + player.getName() + " is playing:\n");
+                player.getInfoLogger().append(player.toString() + "\n");
 
                 if (!player.isSynchronized())
                         throw new DesynchronizedPlayerException();
@@ -30,8 +31,8 @@ public class MonopolyGame {
                 if (!player.getIsJailed())
                         player.movePawnOf(player.rollDoubleDice());
 
-                Cell playerCurrentCell = Board.getCellWithId(player.getPawnPosition());
-                player.getInfoLogger().append(playerCurrentCell.toString()+ "\n");
+                AbstractCell playerCurrentCell = Board.getCellWithId(player.getPawnPosition());
+                player.getInfoLogger().append(playerCurrentCell.toString() + "\n");
                 playerCurrentCell.trigger(player);
                 this.turnCounter++;
         }

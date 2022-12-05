@@ -12,7 +12,7 @@ class DoubleDiceTest {
     private DoubleDice doubleDice;
 
     @BeforeEach
-    void init() {
+    void setUp() {
         doubleDice = new DoubleDice();
     }
 
