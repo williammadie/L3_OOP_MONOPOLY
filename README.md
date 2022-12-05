@@ -67,7 +67,7 @@ La partie s'arrête lorsque le dernier joueur est en situation de monopole, c'es
 
 # Protocole réseau
 
-![protocole monopoly](doc/protocole.png)
+![protocole monopoly](doc/protocole-reseaux.png)
 
 
 **Merci de noter que les règles que nous avons choisies d'implémenter (décrites ci-dessus) ne sont pas nécessairement les règles officielles du Monopoly**
